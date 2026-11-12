@@ -74,3 +74,12 @@ Post-restore readback:
 ## Next step
 
 Select the intended eight-experiment source revision explicitly, then install that revision and run a dedicated instrumented runtime build reporting scenario index, norm, reset cause, frame timing, and memory diagnostics over Serial. Retain the verified five-experiment image as the recovery baseline until that deployment is approved and tested.
+
+
+## Watchdog and Timer1 diagnostic
+
+A separate temporary diagnostic sketch compiled to 2,800 B Flash / 198 B static SRAM and was uploaded with `--verify` (exit code 0). It configured Timer1 free-running and the watchdog in interrupt-only mode. The observed register state was `WDTCSR=0x40` (WDIE set; WDE and WDP bits clear), and reset-cause register was `0x00` at diagnostic startup.
+
+The sketch counted 512 watchdog interrupts over a board-reported 5,000 ms window, then 642 over the next 5,000 ms window (approximately 102.4 and 128.4 interrupts/s according to `millis()`). This proves the watchdog ISR was firing, but the observed rate is faster than the nominal 16 ms timeout for WDP=0000. The ATmega328P datasheet lists watchdog oscillator frequency 76–180 kHz (128 kHz typical), corresponding to approximately 11.4–26.9 ms for 2,048 oscillator cycles. Because the timing reference was the board's own `millis()` and the Timer1 capture experiment was inconclusive, this is a timing anomaly requiring independent calibration—not a confirmed watchdog fault or a pass.
+
+The watchdog diagnostic was removed by restoring the five-experiment firmware. A final full-flash readback again matched the 9,430-byte five-experiment application HEX exactly (zero mismatches), and the board re-enumerated on COM8.

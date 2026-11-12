@@ -49,3 +49,6 @@ The hosted build emitted four unused-parameter warnings from the Arduino AVR cor
 ## Remote hardware readback and I²C test — 12 November 2026
 
 See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). The physical UNO on COM8 was found to contain the five-experiment archive, not the eight-experiment source previously reported. The five-experiment application region matched its independently compiled HEX exactly (9,430 bytes, zero mismatches). A temporary I²C diagnostic found OLED address 0x3C; 400 kHz writes completed 24 full frames with zero transfer errors, while 100 kHz showed five intermittent frame-transfer errors plus one initialization error. The original five-experiment image was restored and verified by a second flash readback (zero application-byte mismatches). OLED visual output and physical controls were not independently observed.
+
+
+A follow-up watchdog diagnostic observed `WDTCSR=0x40` and 512 then 642 WDT interrupts per board-reported 5,000 ms window. The resulting 102–128 Hz rate is faster than the nominal 16 ms WDP=0000 period; the board's own `millis()` was the timebase and Timer1 capture was inconclusive. This is recorded as a timing anomaly requiring independent calibration, not a confirmed failure. See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).

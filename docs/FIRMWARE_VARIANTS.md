@@ -6,8 +6,8 @@ This index identifies each source snapshot. Version labels alone do not identify
 |---|---:|---|---|---|
 | QUANTA 1.0 | Barrier tunneling | Supplied project document Appendix A | Not archived as standalone source | Historical reference |
 | QUANTA 2.0 | 5 | `firmware/archive/QUANTA2-5EXP/QUANTA2-5EXP.ino` | `11B6BFE903C3D60205DC16C599A3254E22BC38B81741522D6F2A380B3208E808` | Supplied five-experiment source |
-| User eight-experiment snapshot | 8 | `firmware/archive/QUANTA2-8EXP-user-snapshot-2026-11-12/QUANTA2.ino` | `32D44795CDE15476F3740B5F4132083585D54032B9CE343372791CD2807468B1` | Supplied eight-experiment source |
-| Reported installed snapshot | 8 | `firmware/archive/installed-snapshot-2026-11-12/QUANTA2.ino` | `162BB11166AD2BF11EFBE75F37F1EB868AF1A15500C0A31EDBD1B5DC25601518` | Local source associated with installation report |
+| User eight-experiment snapshot | 8 | `firmware/archive/QUANTA2-8EXP-user-snapshot-2026-11-12/QUANTA2-8EXP-user-snapshot-2026-11-12.ino` | `32D44795CDE15476F3740B5F4132083585D54032B9CE343372791CD2807468B1` | Supplied eight-experiment source |
+| Reported installed snapshot | 8 | `firmware/archive/installed-snapshot-2026-11-12/installed-snapshot-2026-11-12.ino` | `162BB11166AD2BF11EFBE75F37F1EB868AF1A15500C0A31EDBD1B5DC25601518` | Local source associated with installation report |
 | Canonical repository source | 8 | `firmware/QUANTA2/QUANTA2.ino` | Git blob SHA-1 at audited base: `ffb9bfde75e7d0cfc0e0143e2469b32e51ed88a0` | Current development line |
 
 Git blob SHA-1 is not a SHA-256 digest. Source hashes identify text files, not compiled HEX/BIN files.

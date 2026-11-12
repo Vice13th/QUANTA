@@ -46,3 +46,15 @@ This companion application and protocol are not part of the current firmware.
 ## Prioritization
 
 Numerical validity and resource safety take precedence over adding more visual effects or experiment names.
+
+
+## Immediate prerequisite — source and deployment reconciliation
+
+Before adding new visual features or changing the numerical engine:
+- keep the canonical eight-scenario source separate from the five-experiment historical source;
+- compile every preserved snapshot independently in CI;
+- re-upload the selected canonical source only after recording its source hash and build report;
+- verify OLED, controls, memory margin, and runtime on the actual board;
+- establish deterministic desktop/reference tests before making numerical-correctness claims.
+
+This is a verification milestone, not a claim that these tests have passed.

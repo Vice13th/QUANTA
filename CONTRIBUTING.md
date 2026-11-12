@@ -1,47 +1,77 @@
 # Contributing to QUANTA2
 
-Thank you for your interest in QUANTA2. Contributions are welcome in embedded engineering, numerical verification, hardware compatibility, testing, and documentation.
+Thank you for considering a contribution. QUANTA2 welcomes focused improvements to embedded engineering, numerical verification, hardware compatibility, reproducible builds, and technical documentation.
 
-## Before opening an issue
+Before contributing, please review the [Code of Conduct](CODE_OF_CONDUCT.md), [Technical Overview](docs/TECHNICAL_OVERVIEW.md), [Numerical Methods](docs/NUMERICAL_METHODS.md), and [Validation Plan](docs/VALIDATION.md).
 
-- Search existing issues.
-- Include board and display details for hardware problems.
-- Include the firmware commit and build environment for build problems.
-- Distinguish observed behavior from interpretation.
+## 1. Open an issue first
 
-## Pull requests
+For substantial changes, open an issue before starting implementation. Describe the problem, expected behavior, constraints, and a practical way to verify the proposed change.
 
-A good pull request should:
+For hardware reports, include the board revision, OLED controller and I2C address, wiring, power source, and observed behavior. For build reports, include the commit, toolchain versions, command, and complete compiler output.
 
-1. Explain the problem and the proposed change.
-2. Keep changes focused and reviewable.
-3. Preserve the ATmega328P memory constraints unless the target is intentionally changed.
-4. Include build evidence for firmware changes.
-5. Include hardware evidence when peripherals or timing are affected.
-6. Include numerical reference tests for changes to the simulation kernel.
-7. Update documentation when behavior, wiring, controls, or limitations change.
+## 2. Pull request expectations
 
-## Numerical-code expectations
+A pull request should:
 
-- State the mathematical method being implemented.
-- Document units, discretization, boundary conditions, and scaling.
-- Do not claim unitarity, convergence, physical accuracy, or conservation without test evidence.
-- Compare representative cases against an independent reference.
-- Report known limitations and failure modes.
+1. Explain the problem and intended change.
+2. Keep the diff focused and reviewable.
+3. Preserve the ATmega328P resource constraints unless a target change is intentional.
+4. Include a successful Arduino UNO build for firmware changes.
+5. Include hardware evidence when pins, peripherals, timing, or power behavior change.
+6. Include independent reference tests when the numerical kernel changes.
+7. Update the relevant documentation and changelog.
+8. Distinguish implemented behavior from proposed work and verified results.
 
-## Style and maintainability
+## 3. Numerical and scientific changes
 
-- Prefer clear names and comments for non-obvious numerical operations.
-- Avoid dynamic allocation on the constrained target unless justified.
-- Keep constant tables in program memory when appropriate.
-- Treat interrupt-shared state carefully.
-- Avoid introducing dependencies without documenting their versions and purpose.
+For changes to the simulation kernel, document:
 
-## Local build
+- the mathematical equation and numerical method;
+- units, grid spacing, time step, and boundary conditions;
+- integer scaling, rounding, overflow, and saturation behavior;
+- the reference implementation and test parameters;
+- error metrics and raw comparison results; and
+- known limitations and cases not tested.
+
+Do not claim unitarity, convergence, conservation, physical accuracy, or validated randomness without appropriate evidence. A successful compile is not a scientific validation result.
+
+## 4. Embedded engineering
+
+- Avoid dynamic allocation unless its memory impact is justified.
+- Review Flash, static SRAM, stack, and interrupt usage.
+- Keep large constant tables in program memory where appropriate.
+- Treat data shared with interrupt handlers carefully.
+- Document new dependencies and pin their versions where reproducibility requires it.
+- Do not upload firmware automatically in routine CI.
+
+## 5. Documentation style
+
+Write documentation in clear, concise English. Prefer task-oriented headings, copyable commands, explicit prerequisites, and tables for pin mappings or test evidence. Link to authoritative primary sources. Label statements as implemented, verified, or planned when the distinction matters.
+
+Do not invent hardware test results, benchmark numbers, citations, maintainers, or release metadata.
+
+## 6. Local build
+
+Install the AVR platform and compile from the repository root:
 
 ```bash
-arduino-cli core install arduino:avr
-arduino-cli compile --fqbn arduino:avr:uno .
+arduino-cli core update-index
+arduino-cli core install arduino:avr@1.8.8
+arduino-cli compile --clean --warnings all --fqbn arduino:avr:uno firmware/QUANTA2
 ```
 
-Do not upload automatically as part of a routine CI build. Hardware upload tests must be deliberate and target the intended board and port.
+See the [Reproducibility Guide](docs/REPRODUCIBILITY.md) for evidence requirements. Uploading is a separate, deliberate operation.
+
+## 7. Review process
+
+Maintainers may request revisions, additional evidence, or a narrower scope before merging. Contributions that introduce unsupported scientific claims, undocumented hardware assumptions, or unacceptable memory risks may be deferred until those concerns are addressed.
+
+
+## Firmware variants and evidence
+
+- Treat `firmware/QUANTA2/` as the canonical current sketch.
+- Preserve historical and installation snapshots under `firmware/archive/`; never silently substitute one variant for another.
+- Compile the canonical sketch and all preserved snapshots independently.
+- Update the firmware variant and deployment evidence documents whenever source identity changes.
+- Separate source inspection, compile, upload, physical hardware behavior, and scientific reference validation in reports.

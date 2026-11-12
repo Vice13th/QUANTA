@@ -1,14 +1,30 @@
 # Changelog
 
-All notable changes to this project will be documented here.
+All notable repository changes are documented here.
 
 ## Unreleased
 
-### Repository and documentation
-- Added the user-provided firmware source snapshot as the repository baseline; the installation report references a separate local source snapshot hash.
-- Added technical, hardware, validation, and roadmap documentation.
-- Added an Arduino UNO compile workflow with pinned action revisions and AVR platform version.
-- Added contribution guidance, security reporting guidance, and issue/PR templates.
+### Source and evidence reconciliation
+- Preserved the supplied five-experiment source, supplied eight-experiment source, and source associated with the reported board installation as distinct archived sketches.
+- Added firmware variant and deployment evidence records with explicit source hashes.
+- Expanded Arduino UNO CI to compile the canonical firmware and preserved snapshots independently.
+- Tightened workflow token permissions and pinned actions/checkout to a reviewed v7.0.1 commit SHA.
 
-### Firmware
-- No firmware behavior changes are included in this repository baseline.
+### Documentation
+- Reworked the README into an English project overview and practical quick-start guide.
+- Added numerical-method and reproducibility guides.
+- Added software citation metadata in `CITATION.cff`.
+- Added a project Code of Conduct.
+- Expanded references to include official GitHub/Arduino guidance and scientific-software literature.
+- Clarified evidence levels and the distinction between source inspection, compilation, upload, hardware testing, and scientific validation.
+- Corrected source comments that described the timing-mixed pseudo-random mechanism as physical noise.
+
+### Engineering policy
+- Documented the exact source-level update and its unverified numerical properties.
+- Documented the limited SRAM headroom and the need for stack/runtime measurements.
+- Standardized contributor expectations for numerical changes and reproducible evidence.
+
+## Previous baseline
+
+- Published the Arduino UNO firmware source and initial technical/hardware/validation documentation.
+- Added a pinned Arduino UNO GitHub Actions compile workflow.

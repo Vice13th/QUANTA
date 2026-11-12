@@ -150,3 +150,46 @@ The main loop then:
 ## 13. Recommended next engineering step
 
 Create a QUANTA2.1 validation branch before adding major features. Add deterministic test scenarios, a reference implementation on a desktop, runtime norm telemetry, SRAM/stack measurements, and hardware test records. Only then select a revised integrator or optimize the numerical kernel.
+
+
+## 14. Related documentation
+
+- [Numerical Methods](NUMERICAL_METHODS.md) explains the reference equation, the literal source-level update, measurement-inspired sampling, FFT limitations, and required scientific tests.
+- [Reproducibility Guide](REPRODUCIBILITY.md) defines the pinned toolchain, clean-build command, upload procedure, and evidence levels.
+- [Validation Plan](VALIDATION.md) records the current evidence and outstanding tests.
+
+## 15. Firmware data flow
+
+The following diagram summarizes the source-level runtime path. It is an architectural overview, not a timing or correctness guarantee.
+
+```mermaid
+flowchart TD
+    A[Power on] --> B[Initialize I2C and GPIO]
+    B --> C[Probe OLED at 0x3C / 0x3D]
+    C --> D[Initialize display and FFT coefficients]
+    D --> E[Start Timer1 and Watchdog interrupt]
+    E --> F[Generate experiment scene]
+    F --> G[Initialize Gaussian wave packet]
+    G --> H[Read button state]
+    H --> I[Advance integer wave update]
+    I --> J{Measurement due?}
+    J -- Yes --> K[Sample discrete position weight]
+    K --> L[Reinitialize Gaussian packet]
+    J -- No --> M[Build display frame]
+    L --> M
+    M --> N{Display mode}
+    N -- Wave --> O[Render wave and potential]
+    N -- Momentum --> P[Run 64-point FFT view]
+    O --> Q[Write OLED pages]
+    P --> Q
+    Q --> H
+```
+
+## 16. Source and dependency boundary
+
+The sketch includes the Arduino `Wire` interface and AVR program-memory/interrupt headers. The current repository source does not declare third-party Arduino libraries. The build therefore depends on the Arduino AVR platform and its bundled core/toolchain. If a future change adds an external library, document its exact name and version and update the CI and reproducibility instructions.
+
+
+## 12. Firmware variant boundary
+
+The current repository source is the eight-scenario implementation. A separate five-experiment source and two additional eight-experiment snapshots are preserved under `firmware/archive/` for provenance and independent compilation. See [Firmware Variants](FIRMWARE_VARIANTS.md). Do not combine feature lists or apply one variant's memory figures to another. The installation report refers to a different source SHA-256 than the canonical repository sketch; see [Deployment Evidence](DEPLOYMENT_EVIDENCE.md).

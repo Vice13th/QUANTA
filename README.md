@@ -1,155 +1,94 @@
-# QUANTA2 - Embedded Quantum Wave Simulation Laboratory
+# QUANTA2 — Embedded Quantum Wave Simulation Laboratory
 
-[![Arduino compile](https://github.com/Vice13th/QUANTA2/actions/workflows/arduino-compile.yml/badge.svg)](https://github.com/Vice13th/QUANTA2/actions/workflows/arduino-compile.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Platform: Arduino UNO](https://img.shields.io/badge/Platform-Arduino%20UNO-blue.svg)](https://docs.arduino.cc/hardware/uno-rev3/)
+[![Arduino UNO build](https://github.com/Vice13th/QUANTA2/actions/workflows/arduino-compile.yml/badge.svg)](https://github.com/Vice13th/QUANTA2/actions/workflows/arduino-compile.yml)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-QUANTA2 is an experimental embedded-computing project that visualizes selected one-dimensional quantum-mechanics concepts on an Arduino UNO R3. It combines a discretized complex wavefunction, configurable potential landscapes, probability-based position sampling, a compact momentum-space transform, and a 128x64 I2C OLED interface.
+QUANTA2 is an experimental **classical numerical simulation** of one-dimensional quantum wave-packet behavior on an ATmega328P-class Arduino UNO R3 with a 128×64 I²C OLED. It is not a quantum computer, contains no qubits, and does not perform quantum computation.
 
-> **Scientific scope:** QUANTA2 is a classical numerical simulation running on a conventional microcontroller. It is not a quantum computer, does not contain qubits, and does not perform quantum computation.
+## Canonical source
 
-## Project at a glance
+The current repository development source is the **eight-scenario firmware** at `firmware/QUANTA2/QUANTA2.ino`. The five-experiment Version 2.0 source and other historical snapshots are separate, archived sketches. They are not interchangeable. See [Firmware Variants](docs/FIRMWARE_VARIANTS.md).
 
-| Item | Current implementation |
-|---|---|
-| Target board | Arduino UNO R3 |
-| MCU | ATmega328P, 16 MHz |
-| Spatial grid | 128 cells |
-| Wavefunction | Separate signed 16-bit real and imaginary arrays |
-| Potential | 128 signed 8-bit samples |
-| Display | 128x64 I2C OLED |
-| Momentum view | 64-point radix-2 FFT visualization |
-| Experiments | 8 generated potential scenarios |
-| Main source | [firmware/QUANTA2/QUANTA2.ino](firmware/QUANTA2/QUANTA2.ino) |
-| License | MIT |
+The canonical source defines TUNNELING, RESONANCE, QUANTUM WELL, POTENTIAL STEP, OSCILLATOR, BRAGG CRYSTAL, DISORDER, and QUANTUM BOUNCER. It also contains a 64-point momentum-space FFT view, a 128-cell complex wave state, integer-based sequential time updates, discrete position sampling, statistics, and optional button/buzzer interaction. These are source-level descriptions, not scientific validation claims.
 
-## Features
+## Scientific scope and limitations
 
-- Eight experiment scenarios: tunneling, resonance, quantum well, potential step, harmonic oscillator, Bragg crystal, disorder, and quantum bouncer.
-- Gaussian wave-packet initialization.
-- Integer-based, finite-difference-inspired time evolution.
-- Probability-density and potential-landscape rendering.
-- A 64-point FFT-based momentum-space view.
-- Cumulative probability sampling inspired by the Born rule.
-- Measurement counters and left/right probability indicators.
-- Optional button and buzzer.
-- Watchdog/Timer1 timing-state mixing for the pseudo-random generator.
+- The finite-precision update has not been established as a unitary or convergent integrator.
+- Position sampling is Born-inspired; Gaussian reinitialization after sampling is not a rigorous projection-operator measurement model.
+- Watchdog/Timer1 timing-state mixing is not a certified entropy source and is unsuitable for cryptography.
+- FFT ordering, scaling, aliasing, and quantitative momentum interpretation require independent reference tests.
+- Compile success or firmware upload does not prove numerical accuracy, OLED compatibility, or long-term stability.
 
-Feature descriptions reflect the source code. They do not imply that every numerical or physical behavior has passed independent scientific validation.
+See [Numerical Methods](docs/NUMERICAL_METHODS.md) and [Technical Overview](docs/TECHNICAL_OVERVIEW.md).
 
 ## Hardware
 
-Required:
-- Arduino UNO R3 or compatible ATmega328P board.
-- 128x64 I2C OLED module compatible with the firmware initialization sequence.
+Required: Arduino UNO R3 or compatible ATmega328P board (16 MHz), and a 128×64 I²C OLED compatible with the firmware's SSD1306-style initialization.
 
-Optional:
-- Momentary push button.
-- Small buzzer.
+Optional: momentary button (D2 to GND), buzzer (D9 and GND).
 
-| Component | Connection |
+| Signal | UNO pin |
 |---|---|
-| OLED SDA | A4 |
-| OLED SCL | A5 |
+| OLED SDA / SCL | A4 / A5 |
+| OLED VCC / GND | Follow the exact module ratings |
 | Button | D2 to GND |
 | Buzzer | D9 |
-| Built-in status/detector LED | D13 |
+| Status LED | D13 |
 
-The firmware probes I2C addresses `0x3C` and `0x3D`. See the [Hardware Guide](docs/HARDWARE.md) before wiring or troubleshooting. The exact OLED controller and module compatibility must be checked on the physical display.
+The canonical firmware probes I²C addresses `0x3C` and `0x3D`. This does not guarantee compatibility with every SSD1306/SH1106 breakout. Timer1 is reconfigured; PWM on pins 9/10 and Timer1-dependent libraries such as Servo are incompatible while this firmware runs. See [Hardware](docs/HARDWARE.md).
 
-## Getting started
+## Reproducible build
 
-1. Install the [Arduino IDE](https://www.arduino.cc/en/software) or [Arduino CLI](https://docs.arduino.cc/arduino-cli/).
-2. Connect the UNO over USB.
-3. Open `firmware/QUANTA2/QUANTA2.ino` from this repository.
-4. Select **Arduino UNO** and the correct serial port.
-5. Compile, then upload.
-6. Connect the OLED to A4/A5 and power-cycle the board.
-
-Command-line build:
+Baseline: Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8.
 
 ```bash
 arduino-cli core update-index
-arduino-cli core install arduino:avr
-arduino-cli compile --fqbn arduino:avr:uno firmware/QUANTA2
+arduino-cli core install arduino:avr@1.8.8
+arduino-cli compile --clean --fqbn arduino:avr:uno firmware/QUANTA2
 ```
 
-Upload (replace the port with the one shown on your computer):
+Identify the board/port before upload:
 
 ```bash
-arduino-cli upload --fqbn arduino:avr:uno --port COM8 firmware/QUANTA2
+arduino-cli board list
+arduino-cli upload --verify --fqbn arduino:avr:uno --port COM8 firmware/QUANTA2
 ```
 
-For Linux/macOS, the port may look like `/dev/ttyACM0` or `/dev/ttyUSB0`. Uploading is deliberately separate from compilation; do not upload until the target board and port have been checked.
+Replace COM8 with the detected port. Arduino CLI upload does not compile first; compile and upload must be recorded as separate steps. See [Reproducibility](docs/REPRODUCIBILITY.md).
 
-## Controls
+## Evidence-based status
 
-When the optional button is connected to D2:
-- **Short press:** advance/trigger the measurement cycle.
-- **Long press:** switch between wave and momentum visualization.
+| Area | Status |
+|---|---|
+| Canonical eight-scenario source | Present in repository |
+| Existing main-branch CI compile | Passed for the recorded main commit |
+| Expanded CI for archived variants | Pending this PR |
+| Physical board upload | Supplied report records upload of a different source snapshot |
+| Exact flash readback / binary identity | Not independently verified |
+| OLED, button, buzzer runtime | Not yet verified by a physical test record |
+| FPS, soak test, stack high-water | Not measured in supplied evidence |
+| Numerical accuracy and convergence | Not independently validated |
+| Android companion | Roadmap only |
 
-The optional buzzer on D9 provides a short detector sound. D13 indicates detector activity and blinks if neither configured OLED address is detected.
+The supplied installation report lists 12,204 bytes Flash and 1,564 bytes static SRAM (484 bytes nominally remaining). These are historical reported figures, not fresh measurements of every source snapshot. Static SRAM does not measure runtime stack high-water usage. See [Deployment Evidence](docs/DEPLOYMENT_EVIDENCE.md) and [Validation](docs/VALIDATION.md).
 
 ## Documentation
 
-- [Technical Overview](docs/TECHNICAL_OVERVIEW.md) - source-level architecture, numerical model, data flow, and limitations.
-- [Hardware Guide](docs/HARDWARE.md) - wiring, display detection, startup, and troubleshooting.
-- [Validation Plan](docs/VALIDATION.md) - evidence, open questions, and test procedures.
-- [Roadmap](docs/ROADMAP.md) - proposed next engineering milestones.
-- [References](docs/REFERENCES.md) - hardware and numerical-method background.
-- [Support](SUPPORT.md) - where to start when you need help.
-- [Contributing](CONTRIBUTING.md) - contribution and review expectations.
-- [Security Policy](SECURITY.md) - responsible vulnerability reporting.
-- [Changelog](CHANGELOG.md) - repository changes.
-
-## Memory and performance
-
-The supplied installation/build report recorded:
-- Flash: **12,204 bytes** (approximately 37%).
-- SRAM: **1,564 bytes** (approximately 76%).
-- Reported remaining SRAM: **484 bytes**.
-
-A clean local build of the repository source reproduced these figures. The remaining SRAM margin is limited. Stack usage, runtime stability, and worst-case behavior must be measured before expanding the firmware.
-
-## Validation status
-
-The supplied installation report records a successful Arduino UNO compile/upload on COM8. It identifies an installed source snapshot with SHA-256:
-
-```text
-162BB11166AD2BF11EFBE75F37F1EB868AF1A15500C0A31EDBD1B5DC25601518
-```
-
-The firmware source file committed in this repository has SHA-256:
-
-```text
-DA1425220B12157306CBC7D2AB1C21C7A37277791A3F571760887E1DA57993AF
-```
-
-These source snapshots are not byte-identical. The repository source was compiled separately, but the installation report does not prove that this repository copy was uploaded to the physical board.
-
-A clean local compile was performed with Arduino CLI 1.5.1 and Arduino AVR Boards core 1.8.8. It succeeded: 12,204 bytes Flash and 1,564 bytes SRAM, leaving 484 bytes. The strict-warning build showed four unused-parameter warnings in the AVR core's `new.cpp` and the low-memory stability warning. No warning originating in the QUANTA2 sketch was shown.
-
-The repository includes a CI compile workflow. Hardware and scientific validation remain separate activities; see the [Validation Plan](docs/VALIDATION.md).
-
-## Scientific and engineering limitations
-
-- The current sequential integer update has not been demonstrated to be unitary or norm-preserving.
-- The measurement routine samples from discrete `|psi(x)|^2` weights, then reconstructs a Gaussian packet; it is a simplified measurement-inspired model, not a full measurement-operator implementation.
-- The FFT display is a compact visualization and needs reference comparison before quantitative interpretation.
-- Watchdog/Timer1 mixing is not a certified entropy source and is not suitable for cryptography.
-- OLED controller compatibility is module-dependent.
-- The ATmega328P has only 2 KB SRAM; current reported usage leaves a narrow margin.
-
-Please avoid describing QUANTA2 as a validated quantum simulator until the tests in the validation plan have been completed and their results published.
-
-## Contributing
-
-Issues and pull requests are welcome, especially for numerical verification, embedded-memory optimization, hardware compatibility, reproducible builds, and documentation. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+- [Firmware variants and provenance](docs/FIRMWARE_VARIANTS.md)
+- [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)
+- [Technical overview](docs/TECHNICAL_OVERVIEW.md)
+- [Numerical methods](docs/NUMERICAL_METHODS.md)
+- [Hardware guide](docs/HARDWARE.md)
+- [Validation plan](docs/VALIDATION.md)
+- [Reproducibility](docs/REPRODUCIBILITY.md)
+- [Roadmap](docs/ROADMAP.md)
+- [References](docs/REFERENCES.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Support](SUPPORT.md)
+- [Citation](CITATION.cff)
+- [Changelog](CHANGELOG.md)
 
 ## License
 
-This project is distributed under the MIT License. See [LICENSE](LICENSE).
-
----
-
-**Project status:** Experimental embedded prototype. Firmware upload is reported successful; hardware and numerical validation are in progress.
+MIT. See [LICENSE](LICENSE).

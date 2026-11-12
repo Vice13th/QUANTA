@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use QUANTA2 in research, teaching, or other work, please cite this repository and the exact commit you used."
+type: software
+title: "QUANTA2: Embedded Quantum Wave Simulation Laboratory"
+authors:
+  - name: "Vice13th"
+license: MIT
+url: "https://github.com/Vice13th/QUANTA2"
+abstract: >-
+  QUANTA2 is an experimental classical embedded-computing project that
+  visualizes selected one-dimensional quantum-mechanics concepts on an
+  Arduino UNO R3 using a compact discrete wave-packet model and an I2C OLED.
+keywords:
+  - Arduino
+  - embedded systems
+  - numerical simulation
+  - quantum mechanics education
+  - wave packet
+  - scientific software

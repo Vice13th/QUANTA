@@ -1,6 +1,6 @@
-// QUANTA 2 - Schrodinger's equation, live, on ATmega328P + SSD1306/SH1106 128x64 (I2C)
+// QUANTA2 - Schrödinger-inspired wave-packet visualization on ATmega328P + 128x64 I2C OLED
 // Units: hbar = m = 1, dx = 1 cell, dt = 1/4 per step, V = pot/32, hard walls at both ends.
-// 8 experiments | Born-rule measurement fed by physical noise | momentum view (FFT) | statistics
+// 8 experiment scenarios | Born-inspired sampling | 64-point momentum-space FFT view | counters
 // Optional (nothing required): button D2->GND, buzzer D9->GND. The D13 LED is the detector.
 #include <Wire.h>
 #include <avr/pgmspace.h>
@@ -20,13 +20,13 @@ int16_t twc[32];                              // FFT twiddles (cos, Q15)
 union { int16_t f[128]; uint8_t b[256]; } S;  // scratch: FFT first, then envelope + top panel
 #define hh (S.b)
 #define tp (S.b+128)
-volatile uint32_t pool;                       // entropy pool filled by physical noise
+volatile uint32_t pool;                       // watchdog/Timer1 timing-mixed state; not a certified entropy source
 uint32_t rs=2463534242UL, ex;                 // PRNG state | expected 'right' hits (sum of %)
 uint16_t t, nm, nr;                           // frame | measurements | found on the right
 uint8_t ph, sc, fl, xm, pL, pR, spf=6, zo, ts=12, Eu=9, yE=50, kv, hold, adr=0x3C;
 char buf[20];
 
-ISR(WDT_vect){ uint32_t p=pool^TCNT1; p^=p<<13; p^=p>>17; p^=p<<5; pool=p; }   // watchdog RC jitter vs crystal
+ISR(WDT_vect){ uint32_t p=pool^TCNT1; p^=p<<13; p^=p>>17; p^=p<<5; pool=p; }   // timing-state mixing; entropy quality is not established
 uint32_t rnd(){ uint32_t p; noInterrupts(); p=pool; interrupts(); rs^=p; rs^=rs<<13; rs^=rs>>17; rs^=rs<<5; return rs; }
 
 const uint8_t INIT[] PROGMEM = {0xAE,0xD5,0x80,0xA8,0x3F,0xD3,0,0x40,0x8D,0x14,0x20,0x02,0xA1,0xC8,
@@ -86,7 +86,7 @@ void scene(){                                              // experiment sc, par
   packet(X0,sg,k);
 }
 
-void measure(){                                            // Born rule: x ~ |psi|^2, then collapse
+void measure(){                                            // Born-inspired discrete sampling, then Gaussian reinitialization
   uint32_t tot=0,c=0; uint8_t x;
   for(x=0;x<NX;x++) tot+=(int32_t)re[x]*re[x]+(int32_t)im[x]*im[x];
   uint32_t r=rnd()%(tot|1);

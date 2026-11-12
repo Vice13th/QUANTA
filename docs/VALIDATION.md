@@ -108,3 +108,8 @@ This is a compile result only. No upload of this repository copy and no physical
 - A timing-noise PRNG is not automatically a true-random or cryptographic source.
 
 Only mark a test as passed when a repeatable procedure and evidence are recorded.
+
+
+## 6. Reproducible procedure
+
+Use the exact commands and evidence fields in the [Reproducibility Guide](REPRODUCIBILITY.md). The repository's source-level algorithm and scientific limitations are described in [Numerical Methods](NUMERICAL_METHODS.md). Keep compile, upload, hardware, and numerical results as separate records.

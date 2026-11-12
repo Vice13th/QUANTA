@@ -151,3 +151,7 @@ No physical upload was performed as part of this repository reconciliation. OLED
 ## Latest physical board validation — 2026-11-12
 
 The final report is REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md. The self-recovering eight-scenario image was uploaded to COM8 with AVRDUDE verification and independently read back: 12,642 application bytes, zero mismatches. The I2C bus was found SDA-low/SCL-high and released by one open-drain SCL pulse. The 400 kHz OLED transfer soak completed 411 frames / 36,194 transactions with one status-4 TWI error and zero NACKs/timeouts. OLED pixels, button/buzzer behavior, electrical waveforms, and runtime stack high-water remain unverified.
+
+### UI view-selection correction — 2026-11-12
+
+User feedback identified that holding D2 appeared to return the plot to the initial wave view. The cause was `bool sk=kv^(ph==2)`, which inverted the selected view during the post-measurement phase. It was changed to `bool sk=kv`, so the selected momentum/wave view persists across experiment phases. The corrected source compiled successfully (12,618 B Flash; 1,570 B static SRAM; 478 B nominal free SRAM), uploaded to COM8 with Arduino CLI `--verify`, and an independent full-Flash readback was parsed and compared against the HEX: 12,618 application bytes, zero mismatches. Visual confirmation of the corrected long-press behavior is still pending from the user.

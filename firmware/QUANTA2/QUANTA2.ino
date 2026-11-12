@@ -156,7 +156,7 @@ void hud(bool bad){
 }
 
 void draw(){
-  bool sk=kv^(ph==2);                                      // top panel: wave Re(psi) or momentum |phi(k)|
+  bool sk=kv;                                             // keep the selected wave/momentum view across experiment phases
   if(sk) kspace();
   uint32_t L=0,R=0;
   for(uint8_t x=0;x<NX;x++){

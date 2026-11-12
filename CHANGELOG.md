@@ -4,6 +4,12 @@ All notable repository changes are documented here.
 
 ## Unreleased
 
+### Source and evidence reconciliation
+- Preserved the supplied five-experiment source, supplied eight-experiment source, and source associated with the reported board installation as distinct archived sketches.
+- Added firmware variant and deployment evidence records with explicit source hashes.
+- Expanded Arduino UNO CI to compile the canonical firmware and preserved snapshots independently.
+- Tightened workflow token permissions and pinned actions/checkout to a reviewed v7.0.1 commit SHA.
+
 ### Documentation
 - Reworked the README into an English project overview and practical quick-start guide.
 - Added numerical-method and reproducibility guides.

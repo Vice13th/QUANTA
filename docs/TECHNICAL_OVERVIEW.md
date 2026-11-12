@@ -188,3 +188,8 @@ flowchart TD
 ## 16. Source and dependency boundary
 
 The sketch includes the Arduino `Wire` interface and AVR program-memory/interrupt headers. The current repository source does not declare third-party Arduino libraries. The build therefore depends on the Arduino AVR platform and its bundled core/toolchain. If a future change adds an external library, document its exact name and version and update the CI and reproducibility instructions.
+
+
+## 12. Firmware variant boundary
+
+The current repository source is the eight-scenario implementation. A separate five-experiment source and two additional eight-experiment snapshots are preserved under `firmware/archive/` for provenance and independent compilation. See [Firmware Variants](FIRMWARE_VARIANTS.md). Do not combine feature lists or apply one variant's memory figures to another. The installation report refers to a different source SHA-256 than the canonical repository sketch; see [Deployment Evidence](DEPLOYMENT_EVIDENCE.md).

@@ -42,3 +42,15 @@ This page lists primary platform documentation and background literature relevan
 - GitHub sources inform repository structure, citations, contributor guidance, and workflow security.
 
 Do not cite a numerical-method paper as evidence that QUANTA2 implements that method. Any future accuracy claim must identify the exact firmware commit, numerical method, boundary conditions, test parameters, reference implementation, and error metrics.
+
+
+## Platform and CI security references
+
+- Arduino CLI compile reference: https://docs.arduino.cc/arduino-cli/commands-reference/arduino-cli_compile
+- Arduino CLI upload reference (upload does not compile first): https://docs.arduino.cc/arduino-cli/commands-reference/arduino-cli_upload
+- Arduino CLI getting started: https://arduino.github.io/arduino-cli/dev/getting-started/
+- Arduino AVR core and UNO board definitions: https://github.com/arduino/ArduinoCore-avr
+- GitHub Actions secure use: https://docs.github.com/en/actions/reference/security/secure-use
+- GitHub Actions workflow dependency lockfiles: https://docs.github.com/en/actions/concepts/security/workflow-dependency-lockfiles
+
+Third-party actions are pinned to full commit SHAs. The compile workflow grants only `contents: read` at job level and no workflow-level token permissions.

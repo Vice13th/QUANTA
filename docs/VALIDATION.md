@@ -113,3 +113,17 @@ Only mark a test as passed when a repeatable procedure and evidence are recorded
 ## 6. Reproducible procedure
 
 Use the exact commands and evidence fields in the [Reproducibility Guide](REPRODUCIBILITY.md). The repository's source-level algorithm and scientific limitations are described in [Numerical Methods](NUMERICAL_METHODS.md). Keep compile, upload, hardware, and numerical results as separate records.
+
+
+## 7. Firmware provenance audit (12 November 2026)
+
+The repository and supplied files contain multiple non-identical source snapshots. The canonical repository sketch is the eight-scenario implementation. The supplied Version 2.0 document and `QUANTA2(1).ino` attachment describe a separate five-experiment implementation. A local source associated with the installation report has SHA-256 `162BB11166AD2BF11EFBE75F37F1EB868AF1A15500C0A31EDBD1B5DC25601518` and is preserved separately. The user-supplied eight-experiment source is also archived separately.
+
+See [Firmware Variants](FIRMWARE_VARIANTS.md) and [Deployment Evidence](DEPLOYMENT_EVIDENCE.md). The expanded CI workflow compiles each snapshot independently; that does not establish which source is physically running on the board.
+
+## 8. Evidence boundary
+
+- Existing main-branch run `43149417021` passed for commit `118c0c4a2fa7c42e23a68f0e9f290f7b62b2ea40`.
+- Expanded multi-snapshot CI is pending until GitHub Actions completes.
+- Physical OLED, button, buzzer, flash readback, FPS, soak, and stack high-water tests are not verified by supplied evidence.
+- Numerical convergence, norm conservation, FFT accuracy, and PRNG quality are not independently validated.

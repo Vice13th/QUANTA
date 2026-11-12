@@ -6,8 +6,7 @@ on:
   pull_request:
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: arduino-compile-${{ github.ref }}
@@ -15,13 +14,15 @@ concurrency:
 
 jobs:
   compile:
-    name: Compile for Arduino UNO
+    name: Compile QUANTA2 firmware snapshots for Arduino UNO
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Check out source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Compile sketch
+      - name: Compile canonical and archived sketches
         uses: arduino/compile-sketches@a65bbd19c8a857e8b7c4fa5a244aee069094a426 # v1.1.4
         with:
           cli-version: 1.5.1
@@ -33,4 +34,7 @@ jobs:
             []
           sketch-paths: |
             - firmware/QUANTA2
+            - firmware/archive/QUANTA2-5EXP
+            - firmware/archive/QUANTA2-8EXP-user-snapshot-2026-11-12
+            - firmware/archive/installed-snapshot-2026-11-12
           enable-warnings-report: true

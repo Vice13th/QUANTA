@@ -70,3 +70,10 @@ The current firmware uses simple loop-based press-duration detection. It does no
 ## 9. Hardware evidence
 
 Record the exact board revision, OLED controller/module, I²C address, supply arrangement, and test duration when reporting a hardware result. A successful firmware upload alone does not verify peripheral behavior.
+
+
+## 10. Timer and display compatibility constraints
+
+Timer1 is configured as a free-running counter for timing-state mixing. Do not assume Timer1-dependent libraries or PWM on UNO pins D9/D10 will work concurrently. The optional buzzer uses D9 as a digital output, not a PWM audio channel.
+
+The SSD1306-style initialization sequence and configurable column offset are controller-specific. Detection at I²C address `0x3C` or `0x3D` does not prove SSD1306/SH1106 compatibility. Verify the exact controller and offset physically.

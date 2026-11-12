@@ -66,3 +66,12 @@ See the [Reproducibility Guide](docs/REPRODUCIBILITY.md) for evidence requiremen
 ## 7. Review process
 
 Maintainers may request revisions, additional evidence, or a narrower scope before merging. Contributions that introduce unsupported scientific claims, undocumented hardware assumptions, or unacceptable memory risks may be deferred until those concerns are addressed.
+
+
+## Firmware variants and evidence
+
+- Treat `firmware/QUANTA2/` as the canonical current sketch.
+- Preserve historical and installation snapshots under `firmware/archive/`; never silently substitute one variant for another.
+- Compile the canonical sketch and all preserved snapshots independently.
+- Update the firmware variant and deployment evidence documents whenever source identity changes.
+- Separate source inspection, compile, upload, physical hardware behavior, and scientific reference validation in reports.

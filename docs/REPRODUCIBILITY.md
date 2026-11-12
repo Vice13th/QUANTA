@@ -92,3 +92,21 @@ For each upload or hardware test, additionally record the board revision, port, 
 - [ ] Separate compile, upload, hardware, and numerical results.
 - [ ] Publish test parameters, raw outputs, and comparison methods.
 - [ ] Do not mark unperformed tests as passed.
+
+
+## 9. Compile preserved source snapshots
+
+The repository CI workflow compiles the canonical sketch and each archived snapshot independently. Reproduce with Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8:
+
+```bash
+arduino-cli compile --clean --fqbn arduino:avr:uno firmware/QUANTA2
+arduino-cli compile --clean --fqbn arduino:avr:uno firmware/archive/QUANTA2-5EXP
+arduino-cli compile --clean --fqbn arduino:avr:uno firmware/archive/QUANTA2-8EXP-user-snapshot-2026-11-12
+arduino-cli compile --clean --fqbn arduino:avr:uno firmware/archive/installed-snapshot-2026-11-12
+```
+
+Each command is a distinct build. Never reuse one snapshot's memory report for another.
+
+## 10. Upload verification
+
+Identify the actual port using `arduino-cli board list`, compile the selected sketch, then upload. The Arduino CLI upload command does not compile first. Where supported, use `--verify` and retain the full output. Record the source SHA-256 and compiled artifact hash separately; USB re-enumeration is not flash readback evidence.

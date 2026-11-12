@@ -147,3 +147,8 @@ With `--warnings all`, the local canonical compile succeeded and showed four unu
 ## 10. Remaining hardware and scientific tests
 
 No physical upload was performed as part of this repository reconciliation. OLED rendering, button/buzzer behavior, flash readback, FPS, reset behavior, long-duration stability, stack high-water, norm drift, FFT accuracy, and comparison against a trusted numerical reference remain unverified.
+
+
+## 11. Remote physical-board audit (12 November 2026)
+
+See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). A read-only avrdude readback of the physical UNO on COM8 proved the running application was the five-experiment archive, not the eight-experiment source. The five-experiment HEX matched 9,430 application bytes with zero mismatches; the eight-experiment local build did not match. A temporary I²C diagnostic found one OLED ACK at 0x3C at both 100 kHz and 400 kHz. Across repeated full-frame tests, 400 kHz produced zero errors over 24 frames; 100 kHz produced five intermittent transfer errors over 20 frames, plus one initialization error. The exact five-experiment firmware was restored and post-restore flash readback matched its HEX exactly. Visual OLED output, button/buzzer operation, stack high-water, long-run stability, and numerical correctness remain unverified.

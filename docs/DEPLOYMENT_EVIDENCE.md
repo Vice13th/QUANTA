@@ -44,3 +44,8 @@ A clean checkout of the merged branch was compiled on Hive (Windows) with Arduin
 GitHub Actions run [43219411457](https://github.com/Vice13th/QUANTA2/actions/runs/43219411457) also passed all four sketches on the PR head. The hosted runner reported 12,214 B Flash for the three eight-experiment sketches and 9,430 B for the five-experiment source; static SRAM was 1,564 B and 1,530 B respectively. The 10-byte Flash difference for eight-experiment builds between local Windows and hosted Linux remains unexplained. Do not treat these two build environments as bit-for-bit reproducible until the compiler/toolchain details are compared. Both environments agree on static SRAM.
 
 The hosted build emitted four unused-parameter warnings from the Arduino AVR core's `new.cpp`; no project-source warning was identified in the captured lines. The eight-experiment builds retain the core's low-memory warning. These are compile results only, not runtime stack or hardware stability results.
+
+
+## Remote hardware readback and I²C test — 12 November 2026
+
+See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). The physical UNO on COM8 was found to contain the five-experiment archive, not the eight-experiment source previously reported. The five-experiment application region matched its independently compiled HEX exactly (9,430 bytes, zero mismatches). A temporary I²C diagnostic found OLED address 0x3C; 400 kHz writes completed 24 full frames with zero transfer errors, while 100 kHz showed five intermittent frame-transfer errors plus one initialization error. The original five-experiment image was restored and verified by a second flash readback (zero application-byte mismatches). OLED visual output and physical controls were not independently observed.

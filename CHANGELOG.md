@@ -28,3 +28,8 @@ All notable repository changes are documented here.
 
 - Published the Arduino UNO firmware source and initial technical/hardware/validation documentation.
 - Added a pinned Arduino UNO GitHub Actions compile workflow.
+
+### QUANTA2 hardware reliability
+- Added bounded I2C startup bus-clear handling for SDA-low/SCL-high recovery; the routine never actively drives bus lines HIGH and stops if SCL remains low.
+- Added Wire timeout/error accounting and unbiased rejection sampling for discrete position selection.
+- Recorded the 2026-11-12 COM8 upload, independent Flash readback, I2C bus recovery, 400 kHz OLED transfer soak, watchdog timing anomaly, and remaining visual/electrical acceptance gates in docs/REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md.

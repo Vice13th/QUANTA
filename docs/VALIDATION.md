@@ -147,3 +147,7 @@ With `--warnings all`, the local canonical compile succeeded and showed four unu
 ## 10. Remaining hardware and scientific tests
 
 No physical upload was performed as part of this repository reconciliation. OLED rendering, button/buzzer behavior, flash readback, FPS, reset behavior, long-duration stability, stack high-water, norm drift, FFT accuracy, and comparison against a trusted numerical reference remain unverified.
+
+## Latest physical board validation — 2026-11-12
+
+The final report is REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md. The self-recovering eight-scenario image was uploaded to COM8 with AVRDUDE verification and independently read back: 12,642 application bytes, zero mismatches. The I2C bus was found SDA-low/SCL-high and released by one open-drain SCL pulse. The 400 kHz OLED transfer soak completed 411 frames / 36,194 transactions with one status-4 TWI error and zero NACKs/timeouts. OLED pixels, button/buzzer behavior, electrical waveforms, and runtime stack high-water remain unverified.

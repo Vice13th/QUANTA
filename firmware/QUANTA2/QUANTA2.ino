@@ -20,14 +20,26 @@ int16_t twc[32];                              // FFT twiddles (cos, Q15)
 union { int16_t f[128]; uint8_t b[256]; } S;  // scratch: FFT first, then envelope + top panel
 #define hh (S.b)
 #define tp (S.b+128)
-volatile uint32_t pool;                       // watchdog/Timer1 timing-mixed state; not a certified entropy source
+volatile uint32_t pool;                       // timing-mixed PRNG state; entropy is not characterized
+uint8_t i2cErrors[6];                           // saturating Wire status counters (1..5)
 uint32_t rs=2463534242UL, ex;                 // PRNG state | expected 'right' hits (sum of %)
 uint16_t t, nm, nr;                           // frame | measurements | found on the right
 uint8_t ph, sc, fl, xm, pL, pR, spf=6, zo, ts=12, Eu=9, yE=50, kv, hold, adr=0x3C;
 char buf[20];
 
-ISR(WDT_vect){ uint32_t p=pool^TCNT1; p^=p<<13; p^=p>>17; p^=p<<5; pool=p; }   // timing-state mixing; entropy quality is not established
-uint32_t rnd(){ uint32_t p; noInterrupts(); p=pool; interrupts(); rs^=p; rs^=rs<<13; rs^=rs>>17; rs^=rs<<5; return rs; }
+ISR(WDT_vect){
+  uint32_t p=pool^TCNT1; p^=p<<13; p^=p>>17; p^=p<<5;
+  pool=p;                                     // interrupt-only mode: WDIE remains enabled
+}
+
+uint32_t rnd(){ uint32_t p; noInterrupts(); p=pool; interrupts(); rs^=p; if(!rs) rs=2463534242UL; rs^=rs<<13; rs^=rs>>17; rs^=rs<<5; return rs; }
+
+uint32_t uniformBelow(uint32_t bound){        // rejection sampling: no modulo-reduction bias
+  if(!bound) return 0;
+  uint32_t threshold=(uint32_t)(0UL-bound)%bound, r;
+  do { r=rnd(); } while(r<threshold);
+  return r%bound;
+}
 
 const uint8_t INIT[] PROGMEM = {0xAE,0xD5,0x80,0xA8,0x3F,0xD3,0,0x40,0x8D,0x14,0x20,0x02,0xA1,0xC8,
                                 0xDA,0x12,0x81,0xCF,0xD9,0xF1,0xDB,0x40,0xA4,0xA6,0x2E,0xAF};
@@ -41,8 +53,17 @@ const uint16_t FNT[] PROGMEM = {
   G(2,5,7,5,5),G(6,5,6,5,6),G(3,4,4,4,3),G(6,5,5,5,6),G(7,4,6,4,7),G(7,4,6,4,4),G(3,4,5,5,3),G(5,5,7,5,5),G(7,2,2,2,7),G(1,1,1,5,2),G(5,5,6,5,5),G(4,4,4,4,7),G(5,7,7,5,5),
   G(6,5,5,5,5),G(2,5,5,5,2),G(6,5,6,4,4),G(2,5,5,6,3),G(6,5,6,5,5),G(3,4,2,1,6),G(7,2,2,2,2),G(5,5,5,5,7),G(5,5,5,5,2),G(5,5,7,7,5),G(5,5,2,5,5),G(5,5,2,2,2),G(7,1,2,4,7)};
 
-void cmd(uint8_t c){ Wire.beginTransmission(adr); Wire.write((uint8_t)0); Wire.write(c); Wire.endTransmission(); }
-bool probe(uint8_t a){ Wire.beginTransmission(a); return !Wire.endTransmission(); }
+uint8_t endI2C(){
+  uint8_t rc=Wire.endTransmission();
+  bool timedOut=Wire.getWireTimeoutFlag();
+  if(rc && rc<=5 && i2cErrors[rc]!=255) i2cErrors[rc]++;
+  else if(timedOut && i2cErrors[5]!=255) i2cErrors[5]++;
+  if(timedOut) Wire.clearWireTimeoutFlag();
+  return rc;
+}
+void beginI2C(uint8_t a){ Wire.clearWireTimeoutFlag(); Wire.beginTransmission(a); }
+void cmd(uint8_t c){ beginI2C(adr); Wire.write((uint8_t)0); Wire.write(c); endI2C(); }
+bool probe(uint8_t a){ beginI2C(a); return !endI2C(); }
 
 void packet(uint8_t x0, float s, float k){                 // gaussian packet with momentum k, norm = 5e7
   float n=0, d, g;
@@ -65,7 +86,7 @@ void step(){                                               // i d(psi)/dt = H ps
   }
 }
 
-void scene(){                                              // experiment sc, parameters drawn from physical noise
+void scene(){                                              // parameters from timing-mixed PRNG; entropy is not characterized
   uint32_t r=rnd(); uint8_t w=2+(r&1), h=9+((r>>1)&7), g=3+((r>>4)&3), s, i, X0=24; float sg=7, k=0.785;   // E = 1-cos(k) = 9.4 units
   memset(pot,0,NX); zo=0; ts=12; Eu=9; spf=6;
   switch(sc){
@@ -77,7 +98,7 @@ void scene(){                                              // experiment sc, par
             for(i=0;i<NX;i++){ int16_t d=i-64, v=d*d/24; pot[i]=v>127?127:v; } break;
     case 5: { uint8_t a=(r&0x40)?4:3+2*((r>>7)&1), n=6+((r>>8)&3); h=10+((r>>10)&3); s=68-n*a/2;   // crystal (a=4: Bragg gap)
               for(i=0;i<n;i++) pot[s+i*a]=h; } break;
-    case 6: for(i=50;i<110;i++) pot[i]=rnd()%19; break;                                           // Anderson localisation
+    case 6: for(i=50;i<110;i++) pot[i]=uniformBelow(19); break;                                           // Anderson localisation
     case 7: spf=8; ts=6; X0=40+((r>>6)&31); sg=3; k=0; Eu=X0/3;                                   // quantum bouncer
             for(i=0;i<NX;i++) pot[i]=i/3; break;
   }
@@ -89,7 +110,8 @@ void scene(){                                              // experiment sc, par
 void measure(){                                            // Born-inspired discrete sampling, then Gaussian reinitialization
   uint32_t tot=0,c=0; uint8_t x;
   for(x=0;x<NX;x++) tot+=(int32_t)re[x]*re[x]+(int32_t)im[x]*im[x];
-  uint32_t r=rnd()%(tot|1);
+  if(!tot){ ph=0; return; }                    // refuse an undefined zero-norm measurement
+  uint32_t r=uniformBelow(tot);
   for(x=0;x<NX-1;x++){ c+=(int32_t)re[x]*re[x]+(int32_t)im[x]*im[x]; if(c>r) break; }
   xm=x; fl=8; nm++; if(xm>=64) nr++; ex+=pR;
   for(uint8_t i=0;i<40;i++){ digitalWrite(BUZ,i&1); delayMicroseconds(150); } digitalWrite(BUZ,0);   // detector click
@@ -164,23 +186,48 @@ void draw(){
       pg[x]=b;
     }
     if(!p) hud(bad); else if(p==3 && sk){ text(2,"-K"); text(118,"+K"); }
-    Wire.beginTransmission(adr); Wire.write((uint8_t)0); Wire.write((uint8_t)(0xB0|p)); Wire.write((uint8_t)(COL0&15)); Wire.write((uint8_t)(0x10|(COL0>>4))); Wire.endTransmission();
-    for(uint8_t x=0;x<NX;x+=16){ Wire.beginTransmission(adr); Wire.write((uint8_t)0x40); Wire.write(pg+x,16); Wire.endTransmission(); }
+    beginI2C(adr); Wire.write((uint8_t)0); Wire.write((uint8_t)(0xB0|p)); Wire.write((uint8_t)(COL0&15)); Wire.write((uint8_t)(0x10|(COL0>>4))); endI2C();
+    for(uint8_t x=0;x<NX;x+=16){ beginI2C(adr); Wire.write((uint8_t)0x40); Wire.write(pg+x,16); endI2C(); }
   }
   if(fl) fl--;
-  digitalWrite(13,fl>0);
+  digitalWrite(13,fl>0 || i2cErrors[1] || i2cErrors[2] || i2cErrors[3] || i2cErrors[4] || i2cErrors[5]);
   if(bad) ph=0;
 }
 
+void recoverI2CBus(){                              // I2C bus clear when SDA is stuck low
+  pinMode(A4,INPUT_PULLUP); pinMode(A5,INPUT_PULLUP);
+  delayMicroseconds(10);
+  if(digitalRead(A5)==LOW || digitalRead(A4)==HIGH) return; // SCL low or bus already free
+  for(uint8_t n=0;n<9 && digitalRead(A4)==LOW;n++){
+    digitalWrite(A5,LOW); pinMode(A5,OUTPUT);       // open-drain clock low
+    delayMicroseconds(10);
+    pinMode(A5,INPUT_PULLUP);                       // release SCL; never drive it high
+    delayMicroseconds(10);
+    if(digitalRead(A5)==LOW) return;                // slave or wiring still holds SCL
+  }
+  if(digitalRead(A5)==HIGH && digitalRead(A4)==HIGH){
+    digitalWrite(A4,LOW); pinMode(A4,OUTPUT);       // synthesize STOP
+    delayMicroseconds(10);
+    pinMode(A5,INPUT_PULLUP);
+    delayMicroseconds(10);
+    pinMode(A4,INPUT_PULLUP);                       // release SDA
+    delayMicroseconds(10);
+  }
+}
+
 void setup(){
-  Wire.begin(); Wire.setClock(I2C_HZ);
+  recoverI2CBus();                                  // release a slave left mid-byte before TWI init
+  Wire.begin(); Wire.setClock(I2C_HZ); Wire.setWireTimeout(25000UL,true); Wire.clearWireTimeoutFlag();
   pinMode(BTN,INPUT_PULLUP); pinMode(BUZ,OUTPUT); pinMode(13,OUTPUT);
-  if(!probe(adr)) adr=0x3D;
-  if(!probe(adr)) for(;;){ digitalWrite(13,!digitalRead(13)); delay(100); }   // no OLED found: LED blinks fast
+  if(!probe(adr)){
+    adr=0x3D;
+    if(!probe(adr)) for(;;){ digitalWrite(13,!digitalRead(13)); delay(100); }
+    i2cErrors[2]=0;                         // expected NACK at unused 0x3C address
+  }
   for(uint8_t i=0;i<sizeof INIT;i++) cmd(pgm_read_byte(INIT+i));
   for(uint8_t i=0;i<32;i++) twc[i]=32767*cos(i*M_PI/32);
   TCCR1A=0; TCCR1B=1;                                      // Timer1 free-running at 16 MHz
-  cli(); MCUSR&=~_BV(WDRF); WDTCSR|=_BV(WDCE)|_BV(WDE); WDTCSR=_BV(WDIE); sei();  // WDT -> interrupt every 16 ms
+  cli(); MCUSR&=~_BV(WDRF); WDTCSR|=_BV(WDCE)|_BV(WDE); WDTCSR=_BV(WDIE); sei();  // interrupt-only; WDIE remains enabled
   delay(300);
 }
 

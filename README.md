@@ -92,3 +92,7 @@ The supplied installation report lists 12,204 bytes Flash and 1,564 bytes static
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Latest hardware checkpoint (2026-11-12)
+
+The self-recovering eight-scenario firmware is installed on the connected UNO at COM8. AVRDUDE upload verification passed, and an independent full Flash readback matched all 12,642 application bytes with zero differences. The OLED I2C bus required one SCL bus-clear pulse after SDA was found stuck LOW; a subsequent 400 kHz soak completed 36,194 transfers with one status-4 TWI error and no NACKs/timeouts. Visual OLED, button/buzzer, electrical waveform, and runtime stack acceptance remain open. See docs/REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md.

@@ -193,3 +193,7 @@ The sketch includes the Arduino `Wire` interface and AVR program-memory/interrup
 ## 12. Firmware variant boundary
 
 The current repository source is the eight-scenario implementation. A separate five-experiment source and two additional eight-experiment snapshots are preserved under `firmware/archive/` for provenance and independent compilation. See [Firmware Variants](FIRMWARE_VARIANTS.md). Do not combine feature lists or apply one variant's memory figures to another. The installation report refers to a different source SHA-256 than the canonical repository sketch; see [Deployment Evidence](DEPLOYMENT_EVIDENCE.md).
+
+## 17. I2C fault handling and current hardware evidence
+
+The startup path performs a bounded I2C bus-clear attempt before Wire.begin() when SDA is LOW and SCL is HIGH. Production transactions use a 25 ms Wire timeout, status counters, and a D13 error indication. A 2026-11-12 COM8 test recovered SDA with one SCL pulse and then found the OLED at 0x3C at both 100 kHz and 400 kHz. A 400 kHz soak recorded one status-4 error in 36,194 transfers and no NACKs/timeouts. This is not a zero-error or visual-display acceptance result.

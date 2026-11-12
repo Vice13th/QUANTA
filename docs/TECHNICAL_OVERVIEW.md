@@ -197,3 +197,9 @@ The current repository source is the eight-scenario implementation. A separate f
 ## 17. I2C fault handling and current hardware evidence
 
 The startup path performs a bounded I2C bus-clear attempt before Wire.begin() when SDA is LOW and SCL is HIGH. Production transactions use a 25 ms Wire timeout, status counters, and a D13 error indication. A 2026-11-12 COM8 test recovered SDA with one SCL pulse and then found the OLED at 0x3C at both 100 kHz and 400 kHz. A 400 kHz soak recorded one status-4 error in 36,194 transfers and no NACKs/timeouts. This is not a zero-error or visual-display acceptance result.
+
+## Runtime control regression note — 2026-11-12
+
+The deployed view-selection correction uses bool sk=kv, preserving the selected wave/momentum view across experiment phases. It does not resolve the subsequent user-reported behavior in which a D2 long press returns the entire experiment to TUNNELING without a visible display blank/reboot.
+
+In the canonical source, the long-press branch toggles kv; normal scenario advancement increments sc; and the normalization guard in draw() only resets ph. The observed scenario restart therefore remains unexplained by these individual statements. A trace of sc, ph, hold, kv, normalization status, and reset cause is required before modifying control flow. A Serial diagnostic was compiled but not installed because its static SRAM margin was too small. See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.

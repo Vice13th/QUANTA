@@ -5,6 +5,12 @@
 
 QUANTA2 is an experimental **classical numerical simulation** of one-dimensional quantum wave-packet behavior on an ATmega328P-class Arduino UNO R3 with a 128×64 I²C OLED. It is not a quantum computer, contains no qubits, and does not perform quantum computation.
 
+## Current engineering checkpoint — 2026-11-12
+
+**The D2 long-press scenario-restart defect is open.** After the view-persistence correction in commit acb1d2b, the user reports that holding D2 returns the entire experiment to TUNNELING without a visible display blank/reboot. The root cause is not established. Production firmware remains the verified acb1d2b image; no diagnostic image was uploaded. See [the current checkpoint](docs/CHECKPOINT_2026-11-12_D2_LONG_PRESS.md).
+
+The view-selection correction is deployed and flash-readback verified, but it must not be treated as a complete fix for D2 behavior. The latest GitHub Actions run for acb1d2b (43287974052) passed; PR #4 remains open and unmerged. Static SRAM is 1,570 B, leaving 478 B nominally; runtime stack high-water is unknown.
+
 ## Canonical source
 
 The current repository development source is the **eight-scenario firmware** at `firmware/QUANTA2/QUANTA2.ino`. The five-experiment Version 2.0 source and other historical snapshots are separate, archived sketches. They are not interchangeable. See [Firmware Variants](docs/FIRMWARE_VARIANTS.md).
@@ -58,22 +64,25 @@ Replace COM8 with the detected port. Arduino CLI upload does not compile first; 
 
 ## Evidence-based status
 
-| Area | Status |
+| Area | Status at 2026-11-12 checkpoint |
 |---|---|
-| Canonical eight-scenario source | Present in repository |
-| Existing main-branch CI compile | Passed for the recorded main commit |
-| Expanded four-snapshot CI | Passed on PR head; post-merge main run separately tracked |
-| Physical board upload | Supplied report records upload of a different source snapshot |
-| Exact flash readback / binary identity | Not independently verified |
-| OLED, button, buzzer runtime | Not yet verified by a physical test record |
-| FPS, soak test, stack high-water | Not measured in supplied evidence |
+| Canonical eight-scenario source | Present; branch HEAD acb1d2b |
+| CI for current branch HEAD | Passed: run 43287974052 |
+| PR #4 | Open; not merged |
+| Production firmware on COM8 | acb1d2b image uploaded with --verify |
+| Independent Flash readback | 12,618 application bytes; zero mismatches |
+| D2 long-press behavior | **Open defect:** user reports entire experiment returns to TUNNELING in place |
+| Diagnostic image | Not uploaded; 301 B nominal SRAM remaining in diagnostic build |
+| Runtime stack high-water | Not measured |
+| OLED pixels / electrical waveforms | Not independently verified |
 | Numerical accuracy and convergence | Not independently validated |
 | Android companion | Roadmap only |
 
-The supplied installation report lists 12,204 bytes Flash and 1,564 bytes static SRAM (484 bytes nominally remaining). These are historical reported figures, not fresh measurements of every source snapshot. Static SRAM does not measure runtime stack high-water usage. See [Deployment Evidence](docs/DEPLOYMENT_EVIDENCE.md) and [Validation](docs/VALIDATION.md).
+Current production build: 12,618 B Flash, 1,570 B static SRAM, 478 B nominally free. This is not a runtime stack guarantee. The earlier 12,642-byte image is a prior firmware snapshot and is not the latest deployed build. See [Deployment Evidence](docs/DEPLOYMENT_EVIDENCE.md), [Validation](docs/VALIDATION.md), and [the D2 checkpoint](docs/CHECKPOINT_2026-11-12_D2_LONG_PRESS.md).
 
 ## Documentation
 
+- [Current D2 long-press investigation checkpoint](docs/CHECKPOINT_2026-11-12_D2_LONG_PRESS.md)
 - [Firmware variants and provenance](docs/FIRMWARE_VARIANTS.md)
 - [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)
 - [Technical overview](docs/TECHNICAL_OVERVIEW.md)
@@ -95,4 +104,4 @@ MIT. See [LICENSE](LICENSE).
 
 ## Latest hardware checkpoint (2026-11-12)
 
-The self-recovering eight-scenario firmware is installed on the connected UNO at COM8. AVRDUDE upload verification passed, and an independent full Flash readback matched all 12,642 application bytes with zero differences. The OLED I2C bus required one SCL bus-clear pulse after SDA was found stuck LOW; a subsequent 400 kHz soak completed 36,194 transfers with one status-4 TWI error and no NACKs/timeouts. Visual OLED, button/buzzer, electrical waveform, and runtime stack acceptance remain open. See docs/REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md.
+The latest verified production image on COM8 is commit acb1d2b: 12,618 application bytes, Arduino CLI --verify passed, and independent full Flash readback found zero mismatches. This image includes the view-persistence correction, but the user subsequently reported that D2 long press restarts the entire experiment to TUNNELING in place. The cause is unresolved. The earlier I2C bus recovery and 36,194-transfer soak evidence remain valid for the earlier tested image; do not conflate that 12,642-byte image with the latest 12,618-byte image. See docs/REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md and docs/CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.

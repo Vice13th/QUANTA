@@ -155,3 +155,26 @@ The final report is REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md. The self-recoverin
 ### UI view-selection correction — 2026-11-12
 
 User feedback identified that holding D2 appeared to return the plot to the initial wave view. The cause was `bool sk=kv^(ph==2)`, which inverted the selected view during the post-measurement phase. It was changed to `bool sk=kv`, so the selected momentum/wave view persists across experiment phases. The corrected source compiled successfully (12,618 B Flash; 1,570 B static SRAM; 478 B nominal free SRAM), uploaded to COM8 with Arduino CLI `--verify`, and an independent full-Flash readback was parsed and compared against the HEX: 12,618 application bytes, zero mismatches. Visual confirmation of the corrected long-press behavior is still pending from the user.
+
+## 11. D2 long-press scenario-restart regression (2026-11-12)
+
+The user reports that a D2 long press now returns the **whole experiment** to the first scenario (TUNNELING), in place and without a visible display blank/reboot. This is an open hardware/runtime defect. The prior view-persistence change (bool sk=kv, commit acb1d2b) corrected a phase-dependent display-view inversion but did not resolve the newly clarified behavior.
+
+Source inspection facts:
+- The long-press handler executes kv ^= 1; it does not directly write sc.
+- sc increments only at the normal end of the post-measurement phase.
+- draw() may set ph=0 on a normalization-range failure, but does not reset sc.
+- scene() uses the current sc and does not assign it to zero.
+- Consequently, the observed return to TUNNELING is not explained by the direct long-press statement or the normalization guard alone. A state trace is required.
+
+A temporary Serial diagnostic compiled at 14,054 B Flash / 1,747 B static SRAM (301 B nominal free). It was **not uploaded** because the remaining SRAM margin was considered unsafe. No diagnostic trace was collected. The production image remains commit acb1d2b, with 12,618 B Flash, 1,570 B static SRAM, 478 B nominal free; its upload verification and independent 12,618-byte Flash readback both passed.
+
+### Regression acceptance gates
+- Capture sc, ph, hold, kv, normalization-failure, and reset-cause events without unsafe SRAM/stack overhead.
+- Reproduce the issue with short press, threshold-crossing long press, and sustained hold.
+- Prove that a long press changes only the selected view and does not restart the current scenario.
+- Verify all eight scenarios and both display modes after the fix.
+- Recompile, upload with verification, and independently compare full application Flash readback.
+- Keep PR #4 unmerged until these gates pass.
+
+See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md. Do not infer a brownout, reset, watchdog event, or memory corruption cause from the current evidence.

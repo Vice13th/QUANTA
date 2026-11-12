@@ -58,3 +58,13 @@ The earlier assumption that interrupt-only mode automatically clears WDIE was in
 
 ## Conclusion
 The self-recovering eight-scenario production firmware is installed on COM8, AVRDUDE upload verification passed, and an independent full Flash readback matched all 12,642 application bytes with zero differences. The I2C bus was physically recovered from SDA-low using one SCL pulse, and a sustained 400 kHz OLED transaction test completed with one status-4 error and zero timeouts/NACKs. Visual and electrical acceptance remain open.
+
+## Follow-up user reproduction — D2 long press (2026-11-12, later checkpoint)
+
+After the view-selection correction described above was uploaded and independently read back, the user tested D2 and clarified that a long press returns the **whole experiment** to TUNNELING, not merely the graph. The user reports that it happens in place, without a visible display blank/reboot. This supersedes the earlier pending-confirmation note for the view-only symptom: the view correction was deployed, but the overall D2 interaction is not accepted.
+
+The current source handler toggles kv only. sc is incremented at the normal phase boundary, while the normalization guard can reset ph but does not reset sc. No direct sc=0 assignment was found in scene() or the long-press branch. This source inspection does not identify the root cause.
+
+A temporary Serial diagnostic build (14,054 B Flash, 1,747 B static SRAM, 301 B nominal free) was compiled and deliberately not uploaded due to memory risk. The production image remains the verified commit acb1d2b image (12,618 application bytes, zero readback mismatches). The source worktree was clean at checkpoint; no firmware change was made for this investigation.
+
+The latest CI run for acb1d2b is 43287974052 (success). PR #4 remains open and unmerged. Root cause, reset-cause trace, runtime stack high-water, and the sc/ph event trace remain outstanding. See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md for the complete handoff and ordered next steps.

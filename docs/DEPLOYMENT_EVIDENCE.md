@@ -44,3 +44,20 @@ A clean checkout of the merged branch was compiled on Hive (Windows) with Arduin
 GitHub Actions run [43219411457](https://github.com/Vice13th/QUANTA2/actions/runs/43219411457) also passed all four sketches on the PR head. The hosted runner reported 12,214 B Flash for the three eight-experiment sketches and 9,430 B for the five-experiment source; static SRAM was 1,564 B and 1,530 B respectively. The 10-byte Flash difference for eight-experiment builds between local Windows and hosted Linux remains unexplained. Do not treat these two build environments as bit-for-bit reproducible until the compiler/toolchain details are compared. Both environments agree on static SRAM.
 
 The hosted build emitted four unused-parameter warnings from the Arduino AVR core's `new.cpp`; no project-source warning was identified in the captured lines. The eight-experiment builds retain the core's low-memory warning. These are compile results only, not runtime stack or hardware stability results.
+
+## Latest production image checkpoint — commit acb1d2b (2026-11-12)
+
+This is the latest verified production image on the connected COM8 board:
+- Source: firmware/QUANTA2/QUANTA2.ino
+- Source SHA-256 at checkpoint: 667077B520E0088543D3037F87A4253663B6BFE69445900E0B551E38E5F6E3DF
+- Commit: acb1d2b51412bcdfa8e86337adddb92054cc0a4b
+- Build: 12,618 B Flash; 1,570 B static SRAM; 478 B nominal SRAM remaining.
+- Upload: Arduino CLI --verify succeeded.
+- Independent Flash readback: 12,618 application bytes compared against the generated HEX; zero mismatches.
+- GitHub Actions run 43287974052: completed successfully for the same commit.
+- PR #4 remains open and unmerged.
+
+The image includes the view-persistence correction (bool sk=kv). After installing it, the user reported that a D2 long press returns the entire experiment to TUNNELING without a visible display blank/reboot. This is an unresolved runtime defect; the view correction must not be described as a complete D2 fix.
+
+A later Serial diagnostic build was compiled but not uploaded: 14,054 B Flash / 1,747 B static SRAM / 301 B nominal remaining. It was rejected for deployment because of the reduced memory margin. No diagnostic image replaced the production firmware.
+See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.

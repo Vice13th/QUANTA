@@ -62,7 +62,7 @@ Replace COM8 with the detected port. Arduino CLI upload does not compile first; 
 |---|---|
 | Canonical eight-scenario source | Present in repository |
 | Existing main-branch CI compile | Passed for the recorded main commit |
-| Expanded CI for archived variants | Pending this PR |
+| Expanded four-snapshot CI | Passed on PR head; post-merge main run separately tracked |
 | Physical board upload | Supplied report records upload of a different source snapshot |
 | Exact flash readback / binary identity | Not independently verified |
 | OLED, button, buzzer runtime | Not yet verified by a physical test record |

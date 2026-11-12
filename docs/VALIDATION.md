@@ -127,3 +127,23 @@ See [Firmware Variants](FIRMWARE_VARIANTS.md) and [Deployment Evidence](DEPLOYME
 - Expanded multi-snapshot CI is pending until GitHub Actions completes.
 - Physical OLED, button, buzzer, flash readback, FPS, soak, and stack high-water tests are not verified by supplied evidence.
 - Numerical convergence, norm conservation, FFT accuracy, and PRNG quality are not independently validated.
+
+
+## 9. Independent multi-snapshot compile results (12 November 2026)
+
+A clean clone of the merged branch was compiled locally on Hive with Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8. All four source directories compiled successfully with exit code 0:
+
+| Snapshot | Flash | Static SRAM | Free SRAM | Result |
+|---|---:|---:|---:|---|
+| Canonical eight-scenario | 12,204 B | 1,564 B | 484 B | Pass |
+| Five-experiment reference | 9,430 B | 1,530 B | 518 B | Pass |
+| User eight-experiment snapshot | 12,204 B | 1,564 B | 484 B | Pass |
+| Reported installed snapshot | 12,204 B | 1,564 B | 484 B | Pass |
+
+GitHub Actions run [43219411457](https://github.com/Vice13th/QUANTA2/actions/runs/43219411457) passed the same four-snapshot matrix. Its hosted Linux runner reported 12,214 B Flash for the eight-experiment sources (10 B above the local Windows result) and identical static SRAM. The small Flash discrepancy is unresolved and should be investigated before claiming byte-for-byte reproducible builds.
+
+With `--warnings all`, the local canonical compile succeeded and showed four unused-parameter warnings in Arduino AVR core `new.cpp`; no firmware-source warning appeared in the captured output. The canonical and eight-experiment variants leave 484 B for stack/local variables and trigger Arduino CLI's low-memory warning. This is a static memory report only; no stack high-water or soak test was run.
+
+## 10. Remaining hardware and scientific tests
+
+No physical upload was performed as part of this repository reconciliation. OLED rendering, button/buzzer behavior, flash readback, FPS, reset behavior, long-duration stability, stack high-water, norm drift, FFT accuracy, and comparison against a trusted numerical reference remain unverified.

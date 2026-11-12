@@ -28,3 +28,19 @@ The associated local source is preserved at `firmware/archive/installed-snapshot
 ## Required next hardware record
 
 Capture exact Git commit/source SHA-256, CLI/core/FQBN, build memory output, board revision/port, complete upload output including verify result, OLED controller/address/wiring, evidence of all display pages, button/buzzer behavior, FPS, resets, duration, stack high-water, and numerical norm/error logs. Do not mark unperformed tests passed.
+
+
+## Independent compile audit — 12 November 2026
+
+A clean checkout of the merged branch was compiled on Hive (Windows) with Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8. All four sketches exited with code 0:
+
+| Sketch | Flash | Static SRAM | Remaining SRAM | Result |
+|---|---:|---:|---:|---|
+| Canonical eight-scenario | 12,204 B | 1,564 B (76%) | 484 B | Pass |
+| Five-experiment archive | 9,430 B | 1,530 B (74%) | 518 B | Pass |
+| Supplied eight-experiment snapshot | 12,204 B | 1,564 B (76%) | 484 B | Pass |
+| Reported installed-source snapshot | 12,204 B | 1,564 B (76%) | 484 B | Pass |
+
+GitHub Actions run [43219411457](https://github.com/Vice13th/QUANTA2/actions/runs/43219411457) also passed all four sketches on the PR head. The hosted runner reported 12,214 B Flash for the three eight-experiment sketches and 9,430 B for the five-experiment source; static SRAM was 1,564 B and 1,530 B respectively. The 10-byte Flash difference for eight-experiment builds between local Windows and hosted Linux remains unexplained. Do not treat these two build environments as bit-for-bit reproducible until the compiler/toolchain details are compared. Both environments agree on static SRAM.
+
+The hosted build emitted four unused-parameter warnings from the Arduino AVR core's `new.cpp`; no project-source warning was identified in the captured lines. The eight-experiment builds retain the core's low-memory warning. These are compile results only, not runtime stack or hardware stability results.

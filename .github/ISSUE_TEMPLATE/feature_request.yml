@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose an improvement with a clear use case.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What limitation or user need would this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Project area
+      options:
+        - Numerical model
+        - Visualization
+        - Hardware
+        - Android companion
+        - Build and tooling
+        - Documentation
+        - Other
+  - type: textarea
+    id: tradeoffs
+    attributes:
+      label: Resource and validation considerations
+      description: Consider ATmega328P Flash/SRAM limits and how the change could be tested.

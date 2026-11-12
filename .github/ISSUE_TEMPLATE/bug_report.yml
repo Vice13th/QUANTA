@@ -1,0 +1,65 @@
+name: Bug report
+description: Report a reproducible firmware, build, or hardware problem.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe what you observed. Do not include private credentials or sensitive information.
+  - type: dropdown
+    id: category
+    attributes:
+      label: Problem category
+      options:
+        - Build or upload
+        - OLED or I2C
+        - Button or buzzer
+        - Numerical behavior
+        - Stability or reset
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Firmware commit or version
+      placeholder: Commit SHA
+  - type: input
+    id: board
+    attributes:
+      label: Board
+      placeholder: Arduino UNO R3 / compatible
+  - type: input
+    id: display
+    attributes:
+      label: OLED module and I2C address
+      placeholder: Controller, resolution, 0x3C or 0x3D
+  - type: textarea
+    id: environment
+    attributes:
+      label: Build environment
+      description: Arduino IDE/CLI version, AVR core version, OS, and relevant output.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. ...\n2. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      validations:
+        required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs, photos, or measurements
+      description: Include numerical measurements when reporting simulation behavior.

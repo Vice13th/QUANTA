@@ -1,0 +1,36 @@
+name: Arduino compile
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arduino-compile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    name: Compile for Arduino UNO
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Compile sketch
+        uses: arduino/compile-sketches@a65bbd19c8a857e8b7c4fa5a244aee069094a426 # v1.1.4
+        with:
+          cli-version: 1.5.1
+          fqbn: arduino:avr:uno
+          platforms: |
+            - name: arduino:avr
+              version: 1.8.8
+          libraries: |
+            []
+          sketch-paths: |
+            - firmware/QUANTA2
+          enable-warnings-report: true

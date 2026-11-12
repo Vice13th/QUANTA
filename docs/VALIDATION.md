@@ -155,3 +155,6 @@ See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). A read-only avrd
 
 
 The follow-up watchdog diagnostic observed the WDT interrupt register state (`WDTCSR=0x40`) and 512 then 642 interrupts per board-reported 5,000 ms interval. This is faster than the nominal 16 ms WDP=0000 setting. Since the timing reference was the MCU's own `millis()` and the Timer1 capture was inconclusive, the result is an unresolved timing anomaly; do not claim watchdog timing calibration or entropy quality. The five-experiment firmware was restored and its final flash readback again matched exactly.
+
+
+See the dated [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md) for raw observed watchdog counts, I²C status codes, and authoritative Arduino/Microchip references.

@@ -52,3 +52,6 @@ See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). The physical UNO
 
 
 A follow-up watchdog diagnostic observed `WDTCSR=0x40` and 512 then 642 WDT interrupts per board-reported 5,000 ms window. The resulting 102–128 Hz rate is faster than the nominal 16 ms WDP=0000 period; the board's own `millis()` was the timebase and Timer1 capture was inconclusive. This is recorded as a timing anomaly requiring independent calibration, not a confirmed failure. See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).
+
+
+References for the physical I²C and watchdog observations are listed in [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).

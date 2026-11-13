@@ -77,3 +77,15 @@ Record the exact board revision, OLED controller/module, I²C address, supply ar
 Timer1 is configured as a free-running counter for timing-state mixing. Do not assume Timer1-dependent libraries or PWM on UNO pins D9/D10 will work concurrently. The optional buzzer uses D9 as a digital output, not a PWM audio channel.
 
 The SSD1306-style initialization sequence and configurable column offset are controller-specific. Detection at I²C address `0x3C` or `0x3D` does not prove SSD1306/SH1106 compatibility. Verify the exact controller and offset physically.
+
+## 11. Startup I2C bus recovery
+
+Before initializing Wire, the production firmware releases SDA/SCL and checks their line levels. If SDA is LOW while SCL is HIGH, it emits at most nine open-drain SCL pulses and then synthesizes a STOP if both lines release. It never actively drives a bus line HIGH. If SCL remains LOW, software stops the recovery attempt; check module power, wiring, pull-ups, and the device holding the line. This is a bounded bus-clear attempt, not a substitute for measuring electrical rise time and VOL.
+
+The firmware sets a 25 ms Wire timeout with TWI-peripheral reset on timeout, counts endTransmission errors, and latches D13 on communication errors. Peripheral reset alone cannot release a slave that physically holds SDA/SCL LOW.
+
+## D2 control behavior — latest field report (2026-11-12)
+
+D2 is configured as INPUT_PULLUP and is intended to connect to GND through a momentary button. The user reports that a long press returns the entire experiment to TUNNELING, apparently in place and without a visible OLED blank/reboot. This is not accepted behavior and is not yet explained.
+
+The long-press handler toggles the view flag kv; it does not directly reset the scenario counter sc. Do not assume the switch wiring or debounce is the cause without electrical/state evidence. Button waveform, contact bounce, reset-cause register, and scenario-state trace have not yet been captured. See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.

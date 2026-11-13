@@ -109,3 +109,7 @@ Until the tests above have been completed and published:
 - Do not infer scientific validation from a successful Arduino compile or firmware upload.
 
 For the current implementation and resource budget, see the [Technical Overview](TECHNICAL_OVERVIEW.md). For the evidence log and test procedures, see the [Validation Plan](VALIDATION.md).
+
+## 9.1 Sampling and watchdog implementation note
+
+Discrete sampling now uses rejection sampling rather than direct modulo reduction, avoiding modulo-reduction bias under a uniform 32-bit input assumption. The Watchdog is configured in interrupt-only mode (WDIE=1, WDE=0); WDIE is not automatically cleared in this mode. The timing-mixed generator remains uncharacterized and must not be described as physical entropy or a certified random source. A 2026-11-12 hardware diagnostic observed approximately 642–644 interrupts per 5-second millis() window with WDTCSR=0x40; this timing differs from the nominal 16 ms datasheet timeout and remains unresolved pending identification/measurement of the exact MCU and watchdog oscillator.

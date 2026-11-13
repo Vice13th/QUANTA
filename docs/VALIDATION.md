@@ -123,8 +123,8 @@ See [Firmware Variants](FIRMWARE_VARIANTS.md) and [Deployment Evidence](DEPLOYME
 
 ## 8. Evidence boundary
 
-- New-repository `main` CI run [43389598666](https://github.com/Vice13th/QUANTA/actions/runs/43389598666) passed for commit `c3e13b1625fdc4fff8d98a7d120cc61ffe09197f`, compiling all four snapshots with Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8 for `arduino:avr:uno`.
-- The now-merged remote hardware evidence PR [#2](https://github.com/Vice13th/QUANTA/pull/2) passed its four-snapshot CI run [43388853047](https://github.com/Vice13th/QUANTA/actions/runs/43388853047). The firmware reliability PR [#3](https://github.com/Vice13th/QUANTA/pull/3) also passed CI on its prior head in run [43388857958](https://github.com/Vice13th/QUANTA/actions/runs/43388857958); the last code-bearing draft branch head `a320ae6a14c9e29cfd21a26ec75f2e728cf14495` also passed in run [43389628912](https://github.com/Vice13th/QUANTA/actions/runs/43389628912).
+- New-repository `main` CI run [43388797556](https://github.com/Vice13th/QUANTA/actions/runs/43388797556) passed for commit `7312b27b82a63f9f6cb989315942cb6992446e7f`, compiling all four snapshots with Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8 for `arduino:avr:uno`.
+- The remote hardware evidence PR [#2](https://github.com/Vice13th/QUANTA/pull/2) has a successful four-snapshot CI run [43388853047](https://github.com/Vice13th/QUANTA/actions/runs/43388853047). The firmware reliability PR [#3](https://github.com/Vice13th/QUANTA/pull/3) also passed CI on its prior head in run [43388857958](https://github.com/Vice13th/QUANTA/actions/runs/43388857958); the later documentation-only head `60599bcfc233d8ab8ec9db8c96d668864341cd39` also passed in run [43388987132](https://github.com/Vice13th/QUANTA/actions/runs/43388987132).
 - Runs `43149417021` and `43219411457` belong to the predecessor repository and are historical evidence only, not CI runs in `Vice13th/QUANTA`.
 - The merged hardware report in PR #2 and the draft firmware records in PR #3 concern specific historical firmware snapshots. They do not prove that the current `main` image is installed on the board. The reports include limited flash-readback and I2C evidence, but no human visual confirmation of OLED output or confirmed physical D2/D9 actuation.
 - Numerical convergence, norm conservation, FFT accuracy, PRNG quality, runtime stack high-water, and multi-hour stability are not independently validated.
@@ -147,13 +147,33 @@ With `--warnings all`, the local canonical compile succeeded and showed four unu
 
 No physical upload of the current `main`-branch canonical image was performed as part of this repository reconciliation. Separate hardware records under PRs #2 and #3 document uploads/readbacks of other firmware snapshots and limited I2C transaction tests. They do not establish the current `main` image identity, human-visible OLED output, physical button/buzzer actuation, FPS, reset behavior, long-duration stability, runtime stack high-water, norm drift, FFT accuracy, or agreement with a trusted numerical reference.
 
+## Latest physical board validation — 2026-11-12
 
-## 11. Remote physical-board audit (12 November 2026)
+The final report is REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md. The self-recovering eight-scenario image was uploaded to COM8 with AVRDUDE verification and independently read back: 12,642 application bytes, zero mismatches. The I2C bus was found SDA-low/SCL-high and released by one open-drain SCL pulse. The 400 kHz OLED transfer soak completed 411 frames / 36,194 transactions with one status-4 TWI error and zero NACKs/timeouts. OLED pixels, button/buzzer behavior, electrical waveforms, and runtime stack high-water remain unverified.
 
-See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). A read-only avrdude readback of the physical UNO on COM8 proved the running application was the five-experiment archive, not the eight-experiment source. The five-experiment HEX matched 9,430 application bytes with zero mismatches; the eight-experiment local build did not match. A temporary I²C diagnostic found one OLED ACK at 0x3C at both 100 kHz and 400 kHz. Across repeated full-frame tests, 400 kHz produced zero errors over 24 frames; 100 kHz produced five intermittent transfer errors over 20 frames, plus one initialization error. The exact five-experiment firmware was restored and post-restore flash readback matched its HEX exactly. Visual OLED output, button/buzzer operation, stack high-water, long-run stability, and numerical correctness remain unverified.
+### UI view-selection correction — 2026-11-12
 
+User feedback identified that holding D2 appeared to return the plot to the initial wave view. The cause was `bool sk=kv^(ph==2)`, which inverted the selected view during the post-measurement phase. It was changed to `bool sk=kv`, so the selected momentum/wave view persists across experiment phases. The corrected source compiled successfully (12,618 B Flash; 1,570 B static SRAM; 478 B nominal free SRAM), uploaded to COM8 with Arduino CLI `--verify`, and an independent full-Flash readback was parsed and compared against the HEX: 12,618 application bytes, zero mismatches. Visual confirmation of the corrected long-press behavior is still pending from the user.
 
-The follow-up watchdog diagnostic observed the WDT interrupt register state (`WDTCSR=0x40`) and 512 then 642 interrupts per board-reported 5,000 ms interval. This is faster than the nominal 16 ms WDP=0000 setting. Since the timing reference was the MCU's own `millis()` and the Timer1 capture was inconclusive, the result is an unresolved timing anomaly; do not claim watchdog timing calibration or entropy quality. The five-experiment firmware was restored and its final flash readback again matched exactly.
+## 11. D2 long-press scenario-restart regression (2026-11-12)
 
+The user reports that a D2 long press now returns the **whole experiment** to the first scenario (TUNNELING), in place and without a visible display blank/reboot. This is an open hardware/runtime defect. The prior view-persistence change (bool sk=kv, commit acb1d2b) corrected a phase-dependent display-view inversion but did not resolve the newly clarified behavior.
 
-See the dated [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md) for raw observed watchdog counts, I²C status codes, and authoritative Arduino/Microchip references.
+Source inspection facts:
+- The long-press handler executes kv ^= 1; it does not directly write sc.
+- sc increments only at the normal end of the post-measurement phase.
+- draw() may set ph=0 on a normalization-range failure, but does not reset sc.
+- scene() uses the current sc and does not assign it to zero.
+- Consequently, the observed return to TUNNELING is not explained by the direct long-press statement or the normalization guard alone. A state trace is required.
+
+A temporary Serial diagnostic compiled at 14,054 B Flash / 1,747 B static SRAM (301 B nominal free). It was **not uploaded** because the remaining SRAM margin was considered unsafe. No diagnostic trace was collected. The production image remains commit acb1d2b, with 12,618 B Flash, 1,570 B static SRAM, 478 B nominal free; its upload verification and independent 12,618-byte Flash readback both passed.
+
+### Regression acceptance gates
+- Capture sc, ph, hold, kv, normalization-failure, and reset-cause events without unsafe SRAM/stack overhead.
+- Reproduce the issue with short press, threshold-crossing long press, and sustained hold.
+- Prove that a long press changes only the selected view and does not restart the current scenario.
+- Verify all eight scenarios and both display modes after the fix.
+- Recompile, upload with verification, and independently compare full application Flash readback.
+- Keep PR #4 unmerged until these gates pass.
+
+See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md. Do not infer a brownout, reset, watchdog event, or memory corruption cause from the current evidence.

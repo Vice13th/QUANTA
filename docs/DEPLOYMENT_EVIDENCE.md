@@ -45,16 +45,22 @@ A historical GitHub Actions run in the predecessor repository (run ID `432194114
 
 The hosted build emitted four unused-parameter warnings from the Arduino AVR core's `new.cpp`; no project-source warning was identified in the captured lines. The eight-experiment builds retain the core's low-memory warning. These are compile results only, not runtime stack or hardware stability results.
 
+## Latest production image checkpoint — commit acb1d2b (2026-11-12)
 
-## Remote hardware readback and I²C test — 12 November 2026
+This is the latest verified production image on the connected COM8 board:
+- Source: firmware/QUANTA2/QUANTA2.ino
+- Source SHA-256 at checkpoint: 667077B520E0088543D3037F87A4253663B6BFE69445900E0B551E38E5F6E3DF
+- Commit: acb1d2b51412bcdfa8e86337adddb92054cc0a4b
+- Build: 12,618 B Flash; 1,570 B static SRAM; 478 B nominal SRAM remaining.
+- Upload: Arduino CLI --verify succeeded.
+- Independent Flash readback: 12,618 application bytes compared against the generated HEX; zero mismatches.
+- GitHub Actions run 43287974052: completed successfully for the same commit.
+- PR #4 remains open and unmerged.
 
-See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). The physical UNO on COM8 was found to contain the five-experiment archive, not the eight-experiment source previously reported. The five-experiment application region matched its independently compiled HEX exactly (9,430 bytes, zero mismatches). A temporary I²C diagnostic found OLED address 0x3C; 400 kHz writes completed 24 full frames with zero transfer errors, while 100 kHz showed five intermittent frame-transfer errors plus one initialization error. The original five-experiment image was restored and verified by a second flash readback (zero application-byte mismatches). OLED visual output and physical controls were not independently observed.
+The image includes the view-persistence correction (bool sk=kv). After installing it, the user reported that a D2 long press returns the entire experiment to TUNNELING without a visible display blank/reboot. This is an unresolved runtime defect; the view correction must not be described as a complete D2 fix.
 
-
-A follow-up watchdog diagnostic observed `WDTCSR=0x40` and 512 then 642 WDT interrupts per board-reported 5,000 ms window. The resulting 102–128 Hz rate is faster than the nominal 16 ms WDP=0000 period; the board's own `millis()` was the timebase and Timer1 capture was inconclusive. This is recorded as a timing anomaly requiring independent calibration, not a confirmed failure. See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).
-
-
-References for the physical I²C and watchdog observations are listed in [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).
+A later Serial diagnostic build was compiled but not uploaded: 14,054 B Flash / 1,747 B static SRAM / 301 B nominal remaining. It was rejected for deployment because of the reduced memory margin. No diagnostic image replaced the production firmware.
+See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.
 
 ## New-repository CI verification — 13 November 2026
 

@@ -58,3 +58,16 @@ Before adding new visual features or changing the numerical engine:
 - establish deterministic desktop/reference tests before making numerical-correctness claims.
 
 This is a verification milestone, not a claim that these tests have passed.
+
+## Active blocker — D2 long-press scenario restart (2026-11-12)
+
+**Priority: P0 for the current hardware acceptance path.** The user reports that a long D2 press returns the entire experiment to TUNNELING in place, without a visible display blank/reboot. The cause is unknown. The current handler only toggles kv; scenario index sc is advanced at the normal phase boundary; the normalization guard resets ph, not sc. This mismatch requires instrumentation before a source fix.
+
+Next milestone:
+1. Produce a low-footprint event trace for sc, ph, button threshold, normalization failure, and MCU reset cause.
+2. Prove diagnostic SRAM/stack safety before any upload; the first Serial diagnostic left only 301 B nominal SRAM and was not installed.
+3. Reproduce and isolate the failure.
+4. Fix and regression-test the proven cause.
+5. Verify all eight scenarios, both views, upload verification, and independent Flash readback.
+
+Do not merge PR #4 or prioritize visual feature additions until this blocker is closed. Full details: CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.

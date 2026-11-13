@@ -7,7 +7,7 @@
 | Host/device | Hive, Windows | Local report |
 | Board | Arduino UNO / ATmega328P | Reported identification |
 | Port | COM8 | Reported identification |
-| Source path | `[REDACTED]` | Reported path |
+| Source path | Not retained in repository | Privacy minimization |
 | Source SHA-256 | `162BB11166AD2BF11EFBE75F37F1EB868AF1A15500C0A31EDBD1B5DC25601518` | Independently recomputed from local source during audit |
 | Flash | 12,204 bytes | Reported build metric |
 | Static SRAM | 1,564 bytes | Reported build metric |

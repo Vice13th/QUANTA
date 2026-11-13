@@ -27,3 +27,8 @@ The user-supplied eight-experiment file, local installed-source snapshot, and ca
 3. Each hardware deployment record must identify source SHA-256, build artifact hash, board/FQBN, toolchain, port, upload verification, and physical test evidence.
 4. CI compile success is not hardware or scientific validation.
 5. Update this matrix whenever a variant is added, promoted, or retired.
+
+
+## Physical board readback — 12 November 2026
+
+The remote COM8 flash audit identified the physical board's application as the archived five-experiment QUANTA 2.0 sketch. Its 9,430 application bytes matched the independently compiled five-experiment HEX exactly. The local eight-experiment build did not match the readback. After temporary I²C diagnostics, the same five-experiment image was restored and matched a second readback exactly. Do not interpret the historical local source snapshot or prior upload report as proof that the eight-experiment firmware was present on the board. See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).

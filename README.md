@@ -84,7 +84,7 @@ Current production build: 12,618 B Flash, 1,570 B static SRAM, 478 B nominally f
 
 - [Current D2 long-press investigation checkpoint](docs/CHECKPOINT_2026-11-12_D2_LONG_PRESS.md)
 - [Firmware variants and provenance](docs/FIRMWARE_VARIANTS.md)
-- [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)
+- [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)\n- [Remote hardware test report](docs/REMOTE_HARDWARE_TEST_2026-11-12.md)
 - [Technical overview](docs/TECHNICAL_OVERVIEW.md)
 - [Numerical methods](docs/NUMERICAL_METHODS.md)
 - [Hardware guide](docs/HARDWARE.md)

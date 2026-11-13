@@ -67,8 +67,8 @@ Replace COM8 with the detected port. Arduino CLI upload does not compile first; 
 | Area | Status at 2026-11-12 checkpoint |
 |---|---|
 | Canonical eight-scenario source | Present; branch HEAD acb1d2b |
-| CI for current branch HEAD | Passed: run 43287974052 |
-| PR #4 | Open; not merged |
+| New-repository fix-branch CI | Passed: run 43388987132 for commit `60599bc` |
+| Destination review | Draft PR #3 open; not merged |
 | Production firmware on COM8 | acb1d2b image uploaded with --verify |
 | Independent Flash readback | 12,618 application bytes; zero mismatches |
 | D2 long-press behavior | **Open defect:** user reports entire experiment returns to TUNNELING in place |
@@ -104,4 +104,4 @@ MIT. See [LICENSE](LICENSE).
 
 ## Latest hardware checkpoint (2026-11-12)
 
-The latest verified production image on COM8 is commit acb1d2b: 12,618 application bytes, Arduino CLI --verify passed, and independent full Flash readback found zero mismatches. This image includes the view-persistence correction, but the user subsequently reported that D2 long press restarts the entire experiment to TUNNELING in place. The cause is unresolved. The earlier I2C bus recovery and 36,194-transfer soak evidence remain valid for the earlier tested image; do not conflate that 12,642-byte image with the latest 12,618-byte image. See docs/REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md and docs/CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.
+The latest verified production image recorded in the predecessor-repository hardware report was built from pre-migration commit `acb1d2b` (rewritten commit `26c6a326`): 12,618 application bytes, Arduino CLI --verify passed, and independent full Flash readback found zero mismatches. This image includes the view-persistence correction, but the user subsequently reported that D2 long press restarts the entire experiment to TUNNELING in place. The cause is unresolved. The earlier I2C bus recovery and 36,194-transfer soak evidence remain valid for the earlier tested image; do not conflate that 12,642-byte image with the latest 12,618-byte image. See docs/REMOTE_HARDWARE_TEST_2026-11-12_FINAL.md and docs/CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.

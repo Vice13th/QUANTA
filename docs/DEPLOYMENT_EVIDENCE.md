@@ -61,3 +61,9 @@ The image includes the view-persistence correction (bool sk=kv). After installin
 
 A later Serial diagnostic build was compiled but not uploaded: 14,054 B Flash / 1,747 B static SRAM / 301 B nominal remaining. It was rejected for deployment because of the reduced memory margin. No diagnostic image replaced the production firmware.
 See CHECKPOINT_2026-11-12_D2_LONG_PRESS.md.
+
+## New-repository CI verification — 13 November 2026
+
+The new repository's `main` branch completed the pinned four-snapshot Arduino UNO workflow successfully in [GitHub Actions run 43388797556](https://github.com/Vice13th/QUANTA/actions/runs/43388797556), for commit `7312b27b82a63f9f6cb989315942cb6992446e7f`. The workflow used Arduino CLI 1.5.1, Arduino AVR Boards 1.8.8, and `arduino:avr:uno`. The hosted runner compiled the canonical sketch and all three archived snapshots. The eight-scenario sketches used 12,214 B Flash and 1,564 B static SRAM (484 B nominally remaining); the five-experiment archive used 9,430 B Flash and 1,530 B static SRAM (518 B nominally remaining). The eight-scenario builds emitted Arduino CLI's low-memory warning. This CI result demonstrates compilation only; it does not establish upload, runtime stack margin, peripheral behavior, or numerical validity.
+
+The historical predecessor-repository run IDs are not new-repository CI evidence. New-repository branch CI for the test and firmware-review branches is tracked in PRs [#2](https://github.com/Vice13th/QUANTA/pull/2) and [#3](https://github.com/Vice13th/QUANTA/pull/3).

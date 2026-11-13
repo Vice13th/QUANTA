@@ -61,8 +61,8 @@ Replace COM8 with the detected port. Arduino CLI upload does not compile first; 
 | Area | Status |
 |---|---|
 | Canonical eight-scenario source | Present in repository |
-| New-repository main CI (run 43388797556) | Passed for commit `7312b27` |
-| Four-snapshot CI on new-repository main | Passed for all four sketches (run 43388797556) |
+| New-repository main CI (run 43389598666) | Passed for commit `c3e13b1` |
+| Four-snapshot CI on new-repository main | Passed for all four sketches (run 43389598666) |
 | Physical board flash readback | Five-experiment archive matched exactly; eight-experiment image was not present |
 | Exact flash readback / binary identity | Verified for specific historical images only; not for current `main` image |
 | OLED I²C | 0x3C ACK; 400 kHz frame writes passed 24 frames; visual output unconfirmed |

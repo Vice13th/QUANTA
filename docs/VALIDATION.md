@@ -123,12 +123,11 @@ See [Firmware Variants](FIRMWARE_VARIANTS.md) and [Deployment Evidence](DEPLOYME
 
 ## 8. Evidence boundary
 
-- Existing main-branch run `43149417021` passed for commit `118c0c4a2fa7c42e23a68f0e9f290f7b62b2ea40`.
-- Expanded multi-snapshot CI is pending until GitHub Actions completes.
-- Physical OLED, button, buzzer, flash readback, FPS, soak, and stack high-water tests are not verified by supplied evidence.
-- Numerical convergence, norm conservation, FFT accuracy, and PRNG quality are not independently validated.
-
-
+- New-repository `main` CI run [43388797556](https://github.com/Vice13th/QUANTA/actions/runs/43388797556) passed for commit `7312b27b82a63f9f6cb989315942cb6992446e7f`, compiling all four snapshots with Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8 for `arduino:avr:uno`.
+- The remote hardware evidence PR [#2](https://github.com/Vice13th/QUANTA/pull/2) has a successful four-snapshot CI run [43388853047](https://github.com/Vice13th/QUANTA/actions/runs/43388853047). The firmware reliability PR [#3](https://github.com/Vice13th/QUANTA/pull/3) also passed CI on its prior head in run [43388857958](https://github.com/Vice13th/QUANTA/actions/runs/43388857958); a later documentation-only head is being checked separately.
+- Runs `43149417021` and `43219411457` belong to the predecessor repository and are historical evidence only, not CI runs in `Vice13th/QUANTA`.
+- Hardware records under PRs #2 and #3 concern specific historical firmware snapshots. They do not prove that the current `main` image is installed on the board. The reports include limited flash-readback and I2C evidence, but no human visual confirmation of OLED output or confirmed physical D2/D9 actuation.
+- Numerical convergence, norm conservation, FFT accuracy, PRNG quality, runtime stack high-water, and multi-hour stability are not independently validated.
 ## 9. Independent multi-snapshot compile results (12 November 2026)
 
 A clean clone of the merged branch was compiled locally on Hive with Arduino CLI 1.5.1 and Arduino AVR Boards 1.8.8. All four source directories compiled successfully with exit code 0:
@@ -146,4 +145,4 @@ With `--warnings all`, the local canonical compile succeeded and showed four unu
 
 ## 10. Remaining hardware and scientific tests
 
-No physical upload was performed as part of this repository reconciliation. OLED rendering, button/buzzer behavior, flash readback, FPS, reset behavior, long-duration stability, stack high-water, norm drift, FFT accuracy, and comparison against a trusted numerical reference remain unverified.
+No physical upload of the current `main`-branch canonical image was performed as part of this repository reconciliation. Separate hardware records under PRs #2 and #3 document uploads/readbacks of other firmware snapshots and limited I2C transaction tests. They do not establish the current `main` image identity, human-visible OLED output, physical button/buzzer actuation, FPS, reset behavior, long-duration stability, runtime stack high-water, norm drift, FFT accuracy, or agreement with a trusted numerical reference.

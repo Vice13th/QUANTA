@@ -63,10 +63,10 @@ Replace COM8 with the detected port. Arduino CLI upload does not compile first; 
 | Canonical eight-scenario source | Present in repository |
 | New-repository main CI (run 43388797556) | Passed for commit `7312b27` |
 | Four-snapshot CI on new-repository main | Passed for all four sketches (run 43388797556) |
-| Physical board upload | Historical reports cover different snapshots; current `main` image not confirmed installed |
+| Physical board flash readback | Five-experiment archive matched exactly; eight-experiment image was not present |
 | Exact flash readback / binary identity | Verified for specific historical images only; not for current `main` image |
-| OLED, button, buzzer runtime | I2C transfers recorded; visual output and physical control actuation remain unconfirmed |
-| FPS, soak test, stack high-water | Not measured in supplied evidence |
+| OLED I²C | 0x3C ACK; 400 kHz frame writes passed 24 frames; visual output unconfirmed |
+| Button/buzzer, FPS, soak, stack high-water | Not verified |
 | Numerical accuracy and convergence | Not independently validated |
 | Android companion | Roadmap only |
 
@@ -75,7 +75,7 @@ The supplied installation report lists 12,204 bytes Flash and 1,564 bytes static
 ## Documentation
 
 - [Firmware variants and provenance](docs/FIRMWARE_VARIANTS.md)
-- [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)
+- [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)\n- [Remote hardware test report](docs/REMOTE_HARDWARE_TEST_2026-11-12.md)
 - [Technical overview](docs/TECHNICAL_OVERVIEW.md)
 - [Numerical methods](docs/NUMERICAL_METHODS.md)
 - [Hardware guide](docs/HARDWARE.md)

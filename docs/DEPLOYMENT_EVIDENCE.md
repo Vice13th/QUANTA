@@ -45,6 +45,17 @@ A historical GitHub Actions run in the predecessor repository (run ID `432194114
 
 The hosted build emitted four unused-parameter warnings from the Arduino AVR core's `new.cpp`; no project-source warning was identified in the captured lines. The eight-experiment builds retain the core's low-memory warning. These are compile results only, not runtime stack or hardware stability results.
 
+
+## Remote hardware readback and I²C test — 12 November 2026
+
+See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). The physical UNO on COM8 was found to contain the five-experiment archive, not the eight-experiment source previously reported. The five-experiment application region matched its independently compiled HEX exactly (9,430 bytes, zero mismatches). A temporary I²C diagnostic found OLED address 0x3C; 400 kHz writes completed 24 full frames with zero transfer errors, while 100 kHz showed five intermittent frame-transfer errors plus one initialization error. The original five-experiment image was restored and verified by a second flash readback (zero application-byte mismatches). OLED visual output and physical controls were not independently observed.
+
+
+A follow-up watchdog diagnostic observed `WDTCSR=0x40` and 512 then 642 WDT interrupts per board-reported 5,000 ms window. The resulting 102–128 Hz rate is faster than the nominal 16 ms WDP=0000 period; the board's own `millis()` was the timebase and Timer1 capture was inconclusive. This is recorded as a timing anomaly requiring independent calibration, not a confirmed failure. See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).
+
+
+References for the physical I²C and watchdog observations are listed in [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md).
+
 ## New-repository CI verification — 13 November 2026
 
 The new repository's `main` branch completed the pinned four-snapshot Arduino UNO workflow successfully in [GitHub Actions run 43388797556](https://github.com/Vice13th/QUANTA/actions/runs/43388797556), for commit `7312b27b82a63f9f6cb989315942cb6992446e7f`. The workflow used Arduino CLI 1.5.1, Arduino AVR Boards 1.8.8, and `arduino:avr:uno`. The hosted runner compiled the canonical sketch and all three archived snapshots. The eight-scenario sketches used 12,214 B Flash and 1,564 B static SRAM (484 B nominally remaining); the five-experiment archive used 9,430 B Flash and 1,530 B static SRAM (518 B nominally remaining). The eight-scenario builds emitted Arduino CLI's low-memory warning. This CI result demonstrates compilation only; it does not establish upload, runtime stack margin, peripheral behavior, or numerical validity.

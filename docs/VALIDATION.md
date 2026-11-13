@@ -146,3 +146,14 @@ With `--warnings all`, the local canonical compile succeeded and showed four unu
 ## 10. Remaining hardware and scientific tests
 
 No physical upload of the current `main`-branch canonical image was performed as part of this repository reconciliation. Separate hardware records under PRs #2 and #3 document uploads/readbacks of other firmware snapshots and limited I2C transaction tests. They do not establish the current `main` image identity, human-visible OLED output, physical button/buzzer actuation, FPS, reset behavior, long-duration stability, runtime stack high-water, norm drift, FFT accuracy, or agreement with a trusted numerical reference.
+
+
+## 11. Remote physical-board audit (12 November 2026)
+
+See [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md). A read-only avrdude readback of the physical UNO on COM8 proved the running application was the five-experiment archive, not the eight-experiment source. The five-experiment HEX matched 9,430 application bytes with zero mismatches; the eight-experiment local build did not match. A temporary I²C diagnostic found one OLED ACK at 0x3C at both 100 kHz and 400 kHz. Across repeated full-frame tests, 400 kHz produced zero errors over 24 frames; 100 kHz produced five intermittent transfer errors over 20 frames, plus one initialization error. The exact five-experiment firmware was restored and post-restore flash readback matched its HEX exactly. Visual OLED output, button/buzzer operation, stack high-water, long-run stability, and numerical correctness remain unverified.
+
+
+The follow-up watchdog diagnostic observed the WDT interrupt register state (`WDTCSR=0x40`) and 512 then 642 interrupts per board-reported 5,000 ms interval. This is faster than the nominal 16 ms WDP=0000 setting. Since the timing reference was the MCU's own `millis()` and the Timer1 capture was inconclusive, the result is an unresolved timing anomaly; do not claim watchdog timing calibration or entropy quality. The five-experiment firmware was restored and its final flash readback again matched exactly.
+
+
+See the dated [Remote Hardware Test](REMOTE_HARDWARE_TEST_2026-11-12.md) for raw observed watchdog counts, I²C status codes, and authoritative Arduino/Microchip references.

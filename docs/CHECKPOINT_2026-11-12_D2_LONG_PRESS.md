@@ -1,10 +1,10 @@
-﻿# QUANTA2 - Engineering Checkpoint: D2 Long-Press Restart Investigation
+# QUANTA2 - Engineering Checkpoint: D2 Long-Press Restart Investigation
 
 **Checkpoint date:** 2026-11-12
-**Repository:** Vice13th/QUANTA2
+**Repository:** Vice13th/QUANTA (migrated destination)
 **Branch:** fix/runtime-i2c-wdt-born-sampling
-**HEAD:** acb1d2b51412bcdfa8e86337adddb92054cc0a4b
-**Pull request:** [#4](https://github.com/Vice13th/QUANTA2/pull/4) - OPEN, not merged
+**Source checkpoint commit (pre-migration):** `acb1d2b51412bcdfa8e86337adddb92054cc0a4b` (rewritten commit: `26c6a3262f9423ad7b9b9e0ef8684cb2f33b327f`)
+**Source pull request:** #4 in the predecessor repository; the branch history is preserved here. Review status in the destination repository is tracked separately.
 **Canonical sketch:** firmware/QUANTA2/QUANTA2.ino
 **Current canonical source SHA-256:** 667077B520E0088543D3037F87A4253663B6BFE69445900E0B551E38E5F6E3DF
 

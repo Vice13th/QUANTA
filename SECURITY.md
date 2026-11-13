@@ -12,7 +12,7 @@ Please do not publish exploitable details in a public issue before maintainers h
 
 Use GitHub's private vulnerability reporting for this repository, if enabled:
 
-https://github.com/Vice13th/QUANTA2/security/advisories/new
+https://github.com/Vice13th/QUANTA/security/advisories/new
 
 If private reporting is unavailable, contact the repository owner through the contact information on their GitHub profile and include:
 - A concise description.

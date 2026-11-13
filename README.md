@@ -75,7 +75,8 @@ The supplied installation report lists 12,204 bytes Flash and 1,564 bytes static
 ## Documentation
 
 - [Firmware variants and provenance](docs/FIRMWARE_VARIANTS.md)
-- [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)\n- [Remote hardware test report](docs/REMOTE_HARDWARE_TEST_2026-11-12.md)
+- [Deployment evidence](docs/DEPLOYMENT_EVIDENCE.md)
+- [Remote hardware test report](docs/REMOTE_HARDWARE_TEST_2026-11-12.md)
 - [Technical overview](docs/TECHNICAL_OVERVIEW.md)
 - [Numerical methods](docs/NUMERICAL_METHODS.md)
 - [Hardware guide](docs/HARDWARE.md)

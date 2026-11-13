@@ -140,7 +140,7 @@ A clean clone of the merged branch was compiled locally on Hive with Arduino CLI
 | User eight-experiment snapshot | 12,204 B | 1,564 B | 484 B | Pass |
 | Reported installed snapshot | 12,204 B | 1,564 B | 484 B | Pass |
 
-GitHub Actions run [43219411457](https://github.com/Vice13th/QUANTA2/actions/runs/43219411457) passed the same four-snapshot matrix. Its hosted Linux runner reported 12,214 B Flash for the eight-experiment sources (10 B above the local Windows result) and identical static SRAM. The small Flash discrepancy is unresolved and should be investigated before claiming byte-for-byte reproducible builds.
+A historical GitHub Actions run in the predecessor repository (run ID `43219411457`) passed the same four-snapshot matrix. This is source-repository evidence, not a CI run in `Vice13th/QUANTA`. Its hosted Linux runner reported 12,214 B Flash for the eight-experiment sources (10 B above the local Windows result) and identical static SRAM. The small Flash discrepancy is unresolved and should be investigated before claiming byte-for-byte reproducible builds.
 
 With `--warnings all`, the local canonical compile succeeded and showed four unused-parameter warnings in Arduino AVR core `new.cpp`; no firmware-source warning appeared in the captured output. The canonical and eight-experiment variants leave 484 B for stack/local variables and trigger Arduino CLI's low-memory warning. This is a static memory report only; no stack high-water or soak test was run.
 

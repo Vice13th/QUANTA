@@ -123,6 +123,24 @@ void glyph(uint8_t x, char c){
   for(uint8_t cx=0;cx<3;cx++){ uint8_t b=0; for(uint8_t r=0;r<5;r++) if((g>>(14-3*r-cx))&1) b|=2<<r; pg[x+cx]|=b; }
 }
 void text(uint8_t x, const char*s){ while(*s){ glyph(x,*s++); x+=4; } }
+void pageOut(uint8_t page){
+  Wire.beginTransmission(adr); Wire.write((uint8_t)0); Wire.write((uint8_t)(0xB0|page)); Wire.write((uint8_t)(COL0&15)); Wire.write((uint8_t)(0x10|(COL0>>4))); Wire.endTransmission();
+  for(uint8_t x=0;x<NX;x+=16){ Wire.beginTransmission(adr); Wire.write((uint8_t)0x40); Wire.write(pg+x,16); Wire.endTransmission(); }
+}
+void splash(){
+  for(uint8_t p=0;p<8;p++){ memset(pg,0,NX); pageOut(p); }
+  memset(pg,0,NX); text(34,"VICE13TH LABS X"); pageOut(2);
+  memset(pg,0,NX); text(26,"QUANTUM EXPERIMENTS"); pageOut(4);
+  memset(pg,0,NX); text(48,"LOADING"); pageOut(5);
+  for(uint8_t frame=0;frame<=8;frame++){
+    memset(pg,0,NX);
+    for(uint8_t x=24;x<104;x++) pg[x]=0x18;
+    for(uint8_t x=25;x<25+frame*10;x++) pg[x]=0x7E;
+    pageOut(6);
+    delay(85);
+  }
+  delay(180);
+}
 void hud(bool bad){
   snprintf_P(buf,sizeof buf,PSTR("%u%%"),pL); text(2,buf);
   snprintf_P(buf,sizeof buf,PSTR("%u%%"),pR); text(127-4*strlen(buf),buf);
@@ -178,6 +196,7 @@ void setup(){
   if(!probe(adr)) adr=0x3D;
   if(!probe(adr)) for(;;){ digitalWrite(13,!digitalRead(13)); delay(100); }   // no OLED found: LED blinks fast
   for(uint8_t i=0;i<sizeof INIT;i++) cmd(pgm_read_byte(INIT+i));
+  splash();                                               // branded boot/loading screen
   for(uint8_t i=0;i<32;i++) twc[i]=32767*cos(i*M_PI/32);
   TCCR1A=0; TCCR1B=1;                                      // Timer1 free-running at 16 MHz
   cli(); MCUSR&=~_BV(WDRF); WDTCSR|=_BV(WDCE)|_BV(WDE); WDTCSR=_BV(WDIE); sei();  // WDT -> interrupt every 16 ms

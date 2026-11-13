@@ -1,6 +1,6 @@
 # QUANTA2 — Embedded Quantum Wave Simulation Laboratory
 
-[![Arduino UNO build](https://github.com/Vice13th/QUANTA2/actions/workflows/arduino-compile.yml/badge.svg)](https://github.com/Vice13th/QUANTA2/actions/workflows/arduino-compile.yml)
+[![Arduino UNO build](https://github.com/Vice13th/QUANTA/actions/workflows/arduino-compile.yml/badge.svg)](https://github.com/Vice13th/QUANTA/actions/workflows/arduino-compile.yml)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 QUANTA2 is an experimental **classical numerical simulation** of one-dimensional quantum wave-packet behavior on an ATmega328P-class Arduino UNO R3 with a 128×64 I²C OLED. It is not a quantum computer, contains no qubits, and does not perform quantum computation.

@@ -5,7 +5,7 @@ title: "QUANTA2: Embedded Quantum Wave Simulation Laboratory"
 authors:
   - name: "Vice13th"
 license: MIT
-url: "https://github.com/Vice13th/QUANTA2"
+url: "https://github.com/Vice13th/QUANTA"
 abstract: >-
   QUANTA2 is an experimental classical embedded-computing project that
   visualizes selected one-dimensional quantum-mechanics concepts on an

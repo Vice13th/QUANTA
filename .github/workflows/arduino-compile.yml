@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Compile canonical and archived sketches
-        uses: arduino/compile-sketches@a65bbd19c8a857e8b7c4fa5a244aee069094a426 # v1.1.4
+        uses: arduino/compile-sketches@3f3921bad94c706a153e6d7294445b49d7f76a63 # v1.1.4
         with:
           cli-version: 1.5.1
           fqbn: arduino:avr:uno
